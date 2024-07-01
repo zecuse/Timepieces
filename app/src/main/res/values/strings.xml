@@ -1,3 +1,5 @@
 <resources>
 	<string name="app_name">Timepieces</string>
+	<string name="is_selected"> is selected</string>
+	<string name="is_not_selected"> is not selected</string>
 </resources>

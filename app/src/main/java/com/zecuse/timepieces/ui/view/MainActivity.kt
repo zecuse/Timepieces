@@ -4,13 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.outlined.AccountCircle
+import com.zecuse.timepieces.model.TabItem
 import com.zecuse.timepieces.ui.theme.TimepiecesTheme
 
 class MainActivity: ComponentActivity()
@@ -19,20 +16,19 @@ class MainActivity: ComponentActivity()
 	{
 		super.onCreate(savedInstanceState)
 		enableEdgeToEdge()
+		val tabs = listOf(
+			TabItem(title = "first",
+			        selectedIcon = Icons.Filled.AccountCircle,
+			        unselectedIcon = Icons.Outlined.AccountCircle),
+			TabItem(title = "second",
+			        selectedIcon = Icons.Filled.AccountCircle,
+			        unselectedIcon = Icons.Outlined.AccountCircle),
+			TabItem(title = "third"),
+		)
 		setContent {
 			TimepiecesTheme {
-				Scaffold(modifier = Modifier.fillMaxSize()) {innerPadding ->
-					Greeting(name = "Android",
-					         modifier = Modifier.padding(innerPadding))
-				}
+				TabbedRow(tabItems = tabs)
 			}
 		}
 	}
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier)
-{
-	Text(text = "Hello $name!",
-	     modifier = modifier)
 }
