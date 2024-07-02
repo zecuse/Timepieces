@@ -17,13 +17,14 @@ class MainActivity: ComponentActivity()
 		super.onCreate(savedInstanceState)
 		enableEdgeToEdge()
 		val tabs = listOf(
-			TabItem(title = "first",
+			TabItem(title = "alarm",
 			        selectedIcon = Icons.Filled.AccountCircle,
 			        unselectedIcon = Icons.Outlined.AccountCircle),
-			TabItem(title = "second",
+			TabItem(title = "clock",
 			        selectedIcon = Icons.Filled.AccountCircle,
 			        unselectedIcon = Icons.Outlined.AccountCircle),
-			TabItem(title = "third"),
+			TabItem(title = "stopwatch"),
+			TabItem(title = "timer"),
 		)
 		setContent {
 			TimepiecesTheme {
