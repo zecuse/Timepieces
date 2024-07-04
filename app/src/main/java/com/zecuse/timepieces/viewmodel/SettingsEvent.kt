@@ -3,6 +3,7 @@ package com.zecuse.timepieces.viewmodel
 import com.zecuse.timepieces.model.SettingsState
 import com.zecuse.timepieces.ui.theme.AppColor
 import com.zecuse.timepieces.ui.theme.AppTheme
+import com.zecuse.timepieces.ui.view.MyTabs
 
 /**
  * All of the events that can be performed by a user on the [SettingsViewModel].
@@ -23,4 +24,9 @@ sealed interface SettingsEvent
 	 * Toggles between monospace and the device's system default spacing.
 	 */
 	data class SetSpacing(val spacing: String): SettingsEvent
+
+	/**
+	 * Sets the [SettingsState.tabs] to the [tabs] value.
+	 */
+	data class SetTabs(val tabs: MyTabs): SettingsEvent
 }

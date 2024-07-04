@@ -14,6 +14,7 @@ import com.zecuse.timepieces.ui.theme.AppColor
 import com.zecuse.timepieces.ui.theme.AppTheme
 import com.zecuse.timepieces.ui.theme.changeFont
 import com.zecuse.timepieces.ui.theme.defaultType
+import com.zecuse.timepieces.ui.view.MyTabs
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
@@ -48,7 +49,7 @@ class SettingsViewModel(private val dao: SettingsDao): ViewModel()
 	{
 		when (event)
 		{
-			is SettingsEvent.SetColor      ->
+			is SettingsEvent.SetColor   ->
 			{
 				viewModelScope.launch {
 					var settings = dao.getSettings()
@@ -58,7 +59,7 @@ class SettingsViewModel(private val dao: SettingsDao): ViewModel()
 					state.apply {this.value = this.value.copy(color = event.color)}
 				}
 			}
-			is SettingsEvent.SetSpacing    ->
+			is SettingsEvent.SetSpacing ->
 			{
 				viewModelScope.launch {
 					var settings = dao.getSettings()
@@ -76,7 +77,7 @@ class SettingsViewModel(private val dao: SettingsDao): ViewModel()
 					}
 				}
 			}
-			is SettingsEvent.SetTheme      ->
+			is SettingsEvent.SetTheme   ->
 			{
 				viewModelScope.launch {
 					var settings = dao.getSettings()
@@ -84,6 +85,16 @@ class SettingsViewModel(private val dao: SettingsDao): ViewModel()
 					settings = settings.copy(theme = event.theme)
 					dao.updateSetting(settings)
 					state.apply {this.value = this.value.copy(theme = event.theme)}
+				}
+			}
+			is SettingsEvent.SetTabs    ->
+			{
+				viewModelScope.launch {
+					var settings = dao.getSettings()
+						               .first() ?: SettingsData()
+					settings = settings.copy(tabs = event.tabs)
+					dao.updateSetting(settings)
+					state.apply {this.value = this.value.copy(tabs = event.tabs)}
 				}
 			}
 		}
@@ -118,6 +129,7 @@ class FakeDao: SettingsDao
 		fakeSettings["color"] = AppColor.Magenta
 		fakeSettings["leftHanded"] = false
 		fakeSettings["spacing"] = "default"
+		fakeSettings["tabs"] = MyTabs.Both
 	}
 
 	override suspend fun updateSetting(settings: SettingsData)
@@ -125,12 +137,14 @@ class FakeDao: SettingsDao
 		fakeSettings["theme"] = settings.theme
 		fakeSettings["color"] = settings.color
 		fakeSettings["spacing"] = settings.spacing
+		fakeSettings["tabs"] = settings.tabs
 	}
 
 	override fun getSettings(): Flow<SettingsData?>
 	{
 		return MutableStateFlow(SettingsData(theme = fakeSettings["theme"] as AppTheme,
 		                                     color = fakeSettings["color"] as AppColor,
-		                                     spacing = fakeSettings["spacing"] as String))
+		                                     spacing = fakeSettings["spacing"] as String,
+		                                     tabs = fakeSettings["tabs"] as MyTabs))
 	}
 }

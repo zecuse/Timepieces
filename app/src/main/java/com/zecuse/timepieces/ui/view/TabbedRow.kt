@@ -22,15 +22,35 @@ import androidx.compose.ui.unit.dp
 import com.zecuse.timepieces.R
 import com.zecuse.timepieces.model.TabItem
 import com.zecuse.timepieces.ui.theme.TimepiecesTheme
+import com.zecuse.timepieces.viewmodel.FakeDao
+import com.zecuse.timepieces.viewmodel.SettingsViewModel
 import kotlinx.coroutines.launch
 
+/**
+ * Determine if the tabs should display as an icon, their title, or both.
+ */
+enum class MyTabs
+{
+	Both, Icon, Title
+}
+
+/**
+ * Split the features of the app into separate tabs of content.
+ *
+ * App features include:
+ * An alarm defined in [AlarmView]
+ * A clock defined in [ClockView]
+ * A stopwatch defined in [StopwatchView]
+ * A timer defined in [TimerView]
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun TabbedRow(tabItems: List<TabItem>, modifier: Modifier = Modifier)
+fun TabbedRow(settings: SettingsViewModel,
+              tabItems: List<TabItem>,
+              modifier: Modifier = Modifier)
 {
 	val coScope = rememberCoroutineScope()
 	val pagerState = rememberPagerState {tabItems.size}
-	val test = 1
 
 	Column(modifier = modifier.fillMaxSize()) {
 		TabRow(selectedTabIndex = pagerState.targetPage) {
@@ -58,18 +78,18 @@ fun TabbedRow(tabItems: List<TabItem>, modifier: Modifier = Modifier)
 						throw IllegalArgumentException("An unselectedIcon is required")
 					}
 				}
-				when (test)
+				when (settings.state.value.tabs)
 				{
-					0    -> Tab(selected = true,
-					            text = title,
-					            icon = icon,
-					            onClick = {coScope.launch {pagerState.animateScrollToPage(idx)}})
-					1    -> Tab(selected = true,
-					            icon = icon,
-					            onClick = {coScope.launch {pagerState.animateScrollToPage(idx)}})
-					else -> Tab(selected = true,
-					            text = title,
-					            onClick = {coScope.launch {pagerState.animateScrollToPage(idx)}})
+					MyTabs.Both  -> Tab(selected = true,
+					                    text = title,
+					                    icon = icon,
+					                    onClick = {coScope.launch {pagerState.animateScrollToPage(idx)}})
+					MyTabs.Icon  -> Tab(selected = true,
+					                    icon = icon,
+					                    onClick = {coScope.launch {pagerState.animateScrollToPage(idx)}})
+					MyTabs.Title -> Tab(selected = true,
+					                    text = title,
+					                    onClick = {coScope.launch {pagerState.animateScrollToPage(idx)}})
 				}
 			}
 		}
@@ -86,10 +106,14 @@ fun TabbedRow(tabItems: List<TabItem>, modifier: Modifier = Modifier)
 	}
 }
 
+/**
+ * @suppress
+ */
 @Preview
 @Composable
 private fun TabbedRowPreview()
 {
+	val fake = SettingsViewModel(FakeDao())
 	val tabs = listOf(
 		TabItem(title = "first",
 		        selectedIcon = R.drawable.stopwatch_filled,
@@ -100,6 +124,7 @@ private fun TabbedRowPreview()
 		TabItem(title = "third"),
 	)
 	TimepiecesTheme {
-		TabbedRow(tabItems = tabs)
+		TabbedRow(settings = fake,
+		          tabItems = tabs)
 	}
 }

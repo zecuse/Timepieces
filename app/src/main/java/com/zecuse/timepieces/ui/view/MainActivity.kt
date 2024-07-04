@@ -3,12 +3,26 @@ package com.zecuse.timepieces.ui.view
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import androidx.room.Room
 import com.zecuse.timepieces.R
+import com.zecuse.timepieces.database.SettingsDatabase
 import com.zecuse.timepieces.model.TabItem
 import com.zecuse.timepieces.ui.theme.TimepiecesTheme
+import com.zecuse.timepieces.viewmodel.SettingsFactory
+import com.zecuse.timepieces.viewmodel.SettingsViewModel
 
 class MainActivity: ComponentActivity()
 {
+	private val db by lazy {
+		Room.databaseBuilder(context = applicationContext,
+		                     klass = SettingsDatabase::class.java,
+		                     name = "settings.db")
+			.build()
+	}
+
+	private val settingsModel by viewModels<SettingsViewModel>(factoryProducer = {SettingsFactory(db)})
+
 	override fun onCreate(savedInstanceState: Bundle?)
 	{
 		super.onCreate(savedInstanceState)
@@ -27,8 +41,8 @@ class MainActivity: ComponentActivity()
 					unselectedIcon = R.drawable.hourglass_outline),
 		)
 		setContent {
-			TimepiecesTheme {
-				TabbedRow(tabItems = tabs)
+			TimepiecesTheme(settingsModel.state.value) {
+				TabbedRow(settings = settingsModel, tabItems = tabs)
 			}
 		}
 	}
