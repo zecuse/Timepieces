@@ -40,7 +40,8 @@ class SettingsViewModel(private val dao: SettingsDao): ViewModel()
 				this.value = this.value.copy(theme = settings.theme,
 				                             color = settings.color,
 				                             spacing = spacing,
-				                             typography = typography)
+				                             typography = typography,
+				                             tabs = settings.tabs)
 			}
 		}
 	}

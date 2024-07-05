@@ -15,6 +15,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,6 +24,7 @@ import com.zecuse.timepieces.R
 import com.zecuse.timepieces.model.TabItem
 import com.zecuse.timepieces.ui.theme.TimepiecesTheme
 import com.zecuse.timepieces.viewmodel.FakeDao
+import com.zecuse.timepieces.viewmodel.SettingsEvent
 import com.zecuse.timepieces.viewmodel.SettingsViewModel
 import kotlinx.coroutines.launch
 
@@ -56,19 +58,25 @@ fun TabbedRow(settings: SettingsViewModel,
 		TabRow(selectedTabIndex = pagerState.targetPage) {
 			tabItems.forEachIndexed {idx, item ->
 				val selected = idx == pagerState.targetPage
-				val title = @Composable {Text(text = item.title)}
+				val title = @Composable {
+					Text(text = item.title,
+					     modifier = Modifier.semantics {
+						     contentDescription = item.title
+					     })
+				}
 				val icon = @Composable {
 					if (item.selectedIcon != null && item.unselectedIcon != null)
 					{
 						val isSelected = stringResource(R.string.is_selected)
 						val unSelected = stringResource(R.string.is_not_selected)
+						val titleIcon = item.title + stringResource(R.string.icon)
 						Icon(painter = painterResource(if (selected) item.selectedIcon else item.unselectedIcon),
-						     contentDescription = item.title,
+						     contentDescription = titleIcon,
 						     modifier = Modifier
 							     .size(60.dp)
 							     .semantics {
 								     stateDescription =
-									     if (selected) item.title + isSelected else item.title + unSelected
+									     if (selected) titleIcon + isSelected else titleIcon + unSelected
 							     })
 					}
 					else if ((item.selectedIcon == null) xor (item.unselectedIcon == null))
@@ -114,6 +122,7 @@ fun TabbedRow(settings: SettingsViewModel,
 private fun TabbedRowPreview()
 {
 	val fake = SettingsViewModel(FakeDao())
+	fake.onEvent(SettingsEvent.SetTabs(MyTabs.Both))
 	val tabs = listOf(
 		TabItem(title = "first",
 		        selectedIcon = R.drawable.stopwatch_filled,

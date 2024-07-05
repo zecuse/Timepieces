@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "08e22efda4252cf5ea57e4fef3b922b9",
+    "identityHash": "378b6f18269230bc8a22ce7db545173f",
     "entities": [
       {
         "tableName": "SettingsData",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`theme` TEXT NOT NULL, `color` TEXT NOT NULL, `spacing` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`theme` TEXT NOT NULL, `color` TEXT NOT NULL, `spacing` TEXT NOT NULL, `tabs` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
         "fields": [
           {
             "fieldPath": "theme",
@@ -23,6 +23,12 @@
           {
             "fieldPath": "spacing",
             "columnName": "spacing",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tabs",
+            "columnName": "tabs",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -46,7 +52,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '08e22efda4252cf5ea57e4fef3b922b9')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '378b6f18269230bc8a22ce7db545173f')"
     ]
   }
 }

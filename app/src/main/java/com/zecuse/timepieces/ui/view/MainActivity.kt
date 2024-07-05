@@ -27,18 +27,18 @@ class MainActivity: ComponentActivity()
 	{
 		super.onCreate(savedInstanceState)
 		val tabs = listOf(
-			TabItem(title = "alarm",
+			TabItem(title = getString(R.string.alarm),
 			        selectedIcon = R.drawable.alarm_filled,
 			        unselectedIcon = R.drawable.alarm_outline),
-			TabItem(title = "clock",
+			TabItem(title = getString(R.string.clock),
 			        selectedIcon = R.drawable.clock_filled,
 			        unselectedIcon = R.drawable.clock_outline),
-			TabItem(title = "stopwatch",
-					selectedIcon = R.drawable.stopwatch_filled,
-					unselectedIcon = R.drawable.stopwatch_outline),
-			TabItem(title = "timer",
-					selectedIcon = R.drawable.hourglass_filled,
-					unselectedIcon = R.drawable.hourglass_outline),
+			TabItem(title = getString(R.string.stopwatch),
+			        selectedIcon = R.drawable.stopwatch_filled,
+			        unselectedIcon = R.drawable.stopwatch_outline),
+			TabItem(title = getString(R.string.timer),
+			        selectedIcon = R.drawable.hourglass_filled,
+			        unselectedIcon = R.drawable.hourglass_outline),
 		)
 		setContent {
 			TimepiecesTheme(settingsModel.state.value) {
