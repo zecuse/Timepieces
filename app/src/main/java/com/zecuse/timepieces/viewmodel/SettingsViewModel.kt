@@ -3,24 +3,17 @@ package com.zecuse.timepieces.viewmodel
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.text.font.FontFamily
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.zecuse.timepieces.database.SettingsDao
-import com.zecuse.timepieces.database.SettingsDatabase
+import com.zecuse.timepieces.database.AppDao
 import com.zecuse.timepieces.model.SettingsData
 import com.zecuse.timepieces.model.SettingsState
 import com.zecuse.timepieces.ui.theme.AppFonts
-import com.zecuse.timepieces.ui.theme.AppColor
-import com.zecuse.timepieces.ui.theme.AppTheme
 import com.zecuse.timepieces.ui.theme.changeFont
 import com.zecuse.timepieces.ui.theme.defaultType
-import com.zecuse.timepieces.ui.view.MyTabs
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-class SettingsViewModel(private val dao: SettingsDao): ViewModel()
+class SettingsViewModel(private val dao: AppDao): ViewModel()
 {
 	val state = mutableStateOf(SettingsState())
 
@@ -99,53 +92,5 @@ class SettingsViewModel(private val dao: SettingsDao): ViewModel()
 				}
 			}
 		}
-	}
-}
-
-class SettingsFactory(
-	private val db: SettingsDatabase,
-): ViewModelProvider.Factory
-{
-	@Suppress("UNCHECKED_CAST")
-	override fun <T: ViewModel> create(modelClass: Class<T>): T
-	{
-		return SettingsViewModel(db.dao) as T
-	}
-}
-
-/**
- * This exists for preview and testing purposes.
- *
- * Previews only need this to satisfy the [SettingsViewModel] parameter. It does nothing.
- *
- * Tests use this as a makeshift database.
- */
-class FakeDao: SettingsDao
-{
-	private var fakeSettings = HashMap<String, Any>()
-
-	init
-	{
-		fakeSettings["theme"] = AppTheme.Light
-		fakeSettings["color"] = AppColor.Magenta
-		fakeSettings["leftHanded"] = false
-		fakeSettings["spacing"] = "default"
-		fakeSettings["tabs"] = MyTabs.Both
-	}
-
-	override suspend fun updateSetting(settings: SettingsData)
-	{
-		fakeSettings["theme"] = settings.theme
-		fakeSettings["color"] = settings.color
-		fakeSettings["spacing"] = settings.spacing
-		fakeSettings["tabs"] = settings.tabs
-	}
-
-	override fun getSettings(): Flow<SettingsData?>
-	{
-		return MutableStateFlow(SettingsData(theme = fakeSettings["theme"] as AppTheme,
-		                                     color = fakeSettings["color"] as AppColor,
-		                                     spacing = fakeSettings["spacing"] as String,
-		                                     tabs = fakeSettings["tabs"] as MyTabs))
 	}
 }

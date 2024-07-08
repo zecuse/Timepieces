@@ -6,17 +6,17 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.room.Room
 import com.zecuse.timepieces.R
-import com.zecuse.timepieces.database.SettingsDatabase
+import com.zecuse.timepieces.database.AppDatabase
+import com.zecuse.timepieces.database.SettingsFactory
 import com.zecuse.timepieces.model.TabItem
 import com.zecuse.timepieces.ui.theme.TimepiecesTheme
-import com.zecuse.timepieces.viewmodel.SettingsFactory
 import com.zecuse.timepieces.viewmodel.SettingsViewModel
 
 class MainActivity: ComponentActivity()
 {
 	private val db by lazy {
 		Room.databaseBuilder(context = applicationContext,
-		                     klass = SettingsDatabase::class.java,
+		                     klass = AppDatabase::class.java,
 		                     name = "settings.db")
 			.build()
 	}

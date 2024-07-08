@@ -3,7 +3,7 @@ package com.zecuse.timepieces.model
 import androidx.compose.material3.Typography
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.zecuse.timepieces.database.SettingsDatabase
+import com.zecuse.timepieces.database.AppDatabase
 import com.zecuse.timepieces.ui.theme.defaultType
 import com.zecuse.timepieces.ui.theme.AppColor
 import com.zecuse.timepieces.ui.theme.AppTheme
@@ -25,12 +25,12 @@ data class SettingsState(val theme: AppTheme = AppTheme.Dark,
                          val tabs: MyTabs = MyTabs.Icon)
 
 /**
- * The subset of [SettingsState] values to be saved to the [SettingsDatabase].
+ * The subset of [SettingsState] values to be saved to the [AppDatabase].
  */
 @Entity
-data class SettingsData(val theme: AppTheme = AppTheme.Dark,
+data class SettingsData(@PrimaryKey(autoGenerate = true)
+                        val id: Int = 0,
+                        val theme: AppTheme = AppTheme.Dark,
                         val color: AppColor = AppColor.Green,
                         val spacing: String = "mono",
-                        val tabs: MyTabs = MyTabs.Icon,
-                        @PrimaryKey(autoGenerate = true)
-                        val id: Int = 0)
+                        val tabs: MyTabs = MyTabs.Icon)

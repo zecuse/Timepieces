@@ -6,6 +6,7 @@ plugins {
 	alias(libs.plugins.dokka)
 	alias(libs.plugins.junit)
 	alias(libs.plugins.room)
+	alias(libs.plugins.serialization)
 }
 
 android {
@@ -76,6 +77,9 @@ dependencies {
 	implementation(libs.androidx.lifecycle.runtime.ktx)
 	androidTestImplementation(libs.androidx.junit)
 	androidTestImplementation(libs.androidx.espresso.core)
+
+	// Kotlin
+	implementation(libs.kotlinx.serialization.json)
 
 	// Unit Tests
 	testImplementation(libs.junit.jupiter)

@@ -11,9 +11,9 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
 import com.zecuse.timepieces.R
+import com.zecuse.timepieces.database.FakeDao
 import com.zecuse.timepieces.model.TabItem
 import com.zecuse.timepieces.ui.theme.TimepiecesTheme
-import com.zecuse.timepieces.viewmodel.FakeDao
 import com.zecuse.timepieces.viewmodel.SettingsEvent
 import com.zecuse.timepieces.viewmodel.SettingsViewModel
 import org.junit.Before
