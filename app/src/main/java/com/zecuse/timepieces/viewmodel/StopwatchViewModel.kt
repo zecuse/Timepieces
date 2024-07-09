@@ -29,9 +29,43 @@ class StopwatchViewModel(private val dao: AppDao): ViewModel()
 	{
 		when (event)
 		{
-			StopwatchEvent.ClearLaps     -> TODO()
-			StopwatchEvent.ResetOrLap    -> TODO()
-			StopwatchEvent.ToggleTicking -> TODO()
+			StopwatchEvent.ClearLaps     -> state.apply {this.value.laps.clear()}
+			StopwatchEvent.ResetOrLap    ->
+			{
+				if (state.value.ticking)
+				{
+					val lap =
+						state.value.elapsedTime + System.currentTimeMillis() - state.value.startTime
+					state.value.laps.offer(lap)
+				}
+				else
+				{
+					state.apply {
+						val self = this.value
+						this.value = self.copy(startTime = 0L,
+						                       elapsedTime = 0L)
+						self.laps.clear()
+					}
+				}
+			}
+			StopwatchEvent.ToggleTicking ->
+			{
+				if (state.value.ticking)
+				{
+					val elapsed = System.currentTimeMillis() - state.value.startTime
+					state.apply {
+						this.value = this.value.copy(ticking = false,
+						                             elapsedTime = elapsed)
+					}
+				}
+				else
+				{
+					state.apply {
+						this.value = this.value.copy(ticking = true,
+						                             startTime = System.currentTimeMillis())
+					}
+				}
+			}
 		}
 	}
 }

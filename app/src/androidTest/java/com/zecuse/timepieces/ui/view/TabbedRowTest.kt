@@ -14,8 +14,10 @@ import com.zecuse.timepieces.R
 import com.zecuse.timepieces.database.FakeDao
 import com.zecuse.timepieces.model.TabItem
 import com.zecuse.timepieces.ui.theme.TimepiecesTheme
+import com.zecuse.timepieces.ui.view.tabs.MyTabs
 import com.zecuse.timepieces.viewmodel.SettingsEvent
 import com.zecuse.timepieces.viewmodel.SettingsViewModel
+import com.zecuse.timepieces.viewmodel.StopwatchViewModel
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -26,6 +28,7 @@ class TabbedRowTest
 	val rule = createAndroidComposeRule<ComponentActivity>()
 
 	private lateinit var settings: SettingsViewModel
+	private lateinit var stopwatch: StopwatchViewModel
 
 	@Before
 	fun setUp()
@@ -44,15 +47,18 @@ class TabbedRowTest
 			        selectedIcon = R.drawable.hourglass_filled,
 			        unselectedIcon = R.drawable.hourglass_outline),
 		)
-		settings = SettingsViewModel(FakeDao())
+		val fakeDao = FakeDao()
+		settings = SettingsViewModel(fakeDao)
 		settings.onEvent(SettingsEvent.SetTabs(MyTabs.Both))
+		stopwatch = StopwatchViewModel(fakeDao)
 		rule.setContent {
 			TimepiecesTheme(settings = settings.state.value) {
 				Box(modifier = Modifier
 					.fillMaxSize()
 					.background(color = MaterialTheme.colorScheme.background)) {
-					TabbedRow(settings = settings,
-					          tabItems = tabs)
+					PortraitLayout(tabItems = tabs,
+					               settings = settings,
+					               stopwatch = stopwatch)
 				}
 			}
 		}

@@ -1,16 +1,20 @@
 package com.zecuse.timepieces.ui.view
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.room.Room
 import com.zecuse.timepieces.R
 import com.zecuse.timepieces.database.AppDatabase
 import com.zecuse.timepieces.database.SettingsFactory
+import com.zecuse.timepieces.database.StopwatchFactory
 import com.zecuse.timepieces.model.TabItem
 import com.zecuse.timepieces.ui.theme.TimepiecesTheme
 import com.zecuse.timepieces.viewmodel.SettingsViewModel
+import com.zecuse.timepieces.viewmodel.StopwatchViewModel
 
 class MainActivity: ComponentActivity()
 {
@@ -22,6 +26,7 @@ class MainActivity: ComponentActivity()
 	}
 
 	private val settingsModel by viewModels<SettingsViewModel>(factoryProducer = {SettingsFactory(db)})
+	private val stopwatchModel by viewModels<StopwatchViewModel>(factoryProducer = {StopwatchFactory(db)})
 
 	override fun onCreate(savedInstanceState: Bundle?)
 	{
@@ -41,8 +46,17 @@ class MainActivity: ComponentActivity()
 			        unselectedIcon = R.drawable.hourglass_outline),
 		)
 		setContent {
+			val configuration = LocalConfiguration.current
 			TimepiecesTheme(settingsModel.state.value) {
-				TabbedRow(settings = settingsModel, tabItems = tabs)
+				when (configuration.orientation)
+				{
+					Configuration.ORIENTATION_LANDSCAPE -> LandscapeLayout(tabItems = tabs,
+					                                                       settings = settingsModel,
+					                                                       stopwatch = stopwatchModel)
+					else                                -> PortraitLayout(tabItems = tabs,
+					                                                      settings = settingsModel,
+					                                                      stopwatch = stopwatchModel)
+				}
 			}
 		}
 	}

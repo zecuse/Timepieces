@@ -7,7 +7,7 @@ import com.zecuse.timepieces.model.SettingsData
 import com.zecuse.timepieces.model.StopwatchData
 import com.zecuse.timepieces.ui.theme.AppColor
 import com.zecuse.timepieces.ui.theme.AppTheme
-import com.zecuse.timepieces.ui.view.MyTabs
+import com.zecuse.timepieces.ui.view.tabs.MyTabs
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.encodeToString
@@ -50,7 +50,7 @@ class FakeDao: AppDao
 		fakeSettings["tabs"] = MyTabs.Both
 
 		fakeStopwatch["elapsedTime"] = 0L
-		fakeStopwatch["laps"] = """{"laps":[0L]}"""
+		fakeStopwatch["laps"] = "[0L]"
 	}
 
 	override suspend fun updateSetting(settings: SettingsData)

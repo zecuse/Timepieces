@@ -34,7 +34,7 @@ class SettingsViewModel(private val dao: AppDao): ViewModel()
 				                             color = settings.color,
 				                             spacing = spacing,
 				                             typography = typography,
-				                             tabs = settings.tabs)
+				                             tabsStyle = settings.tabs)
 			}
 		}
 	}
@@ -88,7 +88,7 @@ class SettingsViewModel(private val dao: AppDao): ViewModel()
 						               .first() ?: SettingsData()
 					settings = settings.copy(tabs = event.tabs)
 					dao.updateSetting(settings)
-					state.apply {this.value = this.value.copy(tabs = event.tabs)}
+					state.apply {this.value = this.value.copy(tabsStyle = event.tabs)}
 				}
 			}
 		}

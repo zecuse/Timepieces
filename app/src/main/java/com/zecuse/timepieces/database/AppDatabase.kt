@@ -12,7 +12,7 @@ import com.zecuse.timepieces.viewmodel.SettingsViewModel
 import com.zecuse.timepieces.viewmodel.StopwatchViewModel
 
 @Database(entities = [SettingsData::class, StopwatchData::class],
-          version = 1)
+          version = 2)
 @TypeConverters(LapsConverter::class)
 abstract class AppDatabase: RoomDatabase()
 {

@@ -7,13 +7,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.zecuse.timepieces.viewmodel.StopwatchViewModel
 
 @Composable
-fun StopwatchView()
+fun StopwatchView(stopwatch: StopwatchViewModel)
 {
 	Box(contentAlignment = Alignment.Center,
-		modifier = Modifier.fillMaxSize()) {
+	    modifier = Modifier.fillMaxSize()) {
 		Text(text = "TODO stopwatch",
-			 style = MaterialTheme.typography.displayLarge)
+		     style = MaterialTheme.typography.displayLarge)
 	}
 }

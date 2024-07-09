@@ -7,7 +7,7 @@ import com.zecuse.timepieces.database.AppDatabase
 import com.zecuse.timepieces.ui.theme.defaultType
 import com.zecuse.timepieces.ui.theme.AppColor
 import com.zecuse.timepieces.ui.theme.AppTheme
-import com.zecuse.timepieces.ui.view.MyTabs
+import com.zecuse.timepieces.ui.view.tabs.MyTabs
 import com.zecuse.timepieces.viewmodel.SettingsViewModel
 
 /**
@@ -22,7 +22,7 @@ data class SettingsState(val theme: AppTheme = AppTheme.Dark,
                          val color: AppColor = AppColor.Green,
                          val spacing: String = "mono",
                          val typography: Typography = defaultType,
-                         val tabs: MyTabs = MyTabs.Icon)
+                         val tabsStyle: MyTabs = MyTabs.Icon)
 
 /**
  * The subset of [SettingsState] values to be saved to the [AppDatabase].
