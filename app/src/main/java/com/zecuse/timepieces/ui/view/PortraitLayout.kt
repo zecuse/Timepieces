@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -15,6 +16,7 @@ import com.zecuse.timepieces.R
 import com.zecuse.timepieces.database.FakeDao
 import com.zecuse.timepieces.model.TabItem
 import com.zecuse.timepieces.ui.theme.TimepiecesTheme
+import com.zecuse.timepieces.ui.theme.shapes.roundrect
 import com.zecuse.timepieces.ui.view.tabs.MyTabs
 import com.zecuse.timepieces.ui.view.tabs.TabbedRow
 import com.zecuse.timepieces.ui.view.tabs.TitleIconTab
@@ -41,16 +43,18 @@ fun PortraitLayout(tabItems: List<TabItem>,
 {
 	val coScope = rememberCoroutineScope()
 	val pagerState = rememberPagerState {tabItems.size}
+	val indicatorShape = MaterialTheme.roundrect(Pair(50.dp, 75.dp), 5.dp)
 
 	Column(modifier = modifier.fillMaxSize()) {
 		TabbedRow(selectedTabIndex = pagerState.targetPage,
-		          modifier = Modifier.padding(4.dp)) {
+		          modifier = Modifier.padding(4.dp),
+				  indicatorShape = indicatorShape) {
 			tabItems.forEachIndexed {idx, item ->
-				TitleIconTab(settings.state.value.tabsStyle,
-				             idx,
-				             item,
-				             coScope,
-				             pagerState)
+				TitleIconTab(tabsStyle = settings.state.value.tabsStyle,
+				             idx = idx,
+				             item = item,
+				             coScope = coScope,
+				             pagerState = pagerState)
 			}
 		}
 		HorizontalPager(state = pagerState,

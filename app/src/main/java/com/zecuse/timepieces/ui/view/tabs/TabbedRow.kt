@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.Dp
 @Composable
 fun TabbedRow(modifier: Modifier = Modifier,
               selectedTabIndex: Int = 0,
-              fixedSize: Boolean = true,
               containerColor: Color = MaterialTheme.colorScheme.background,
               containerShape: Shape = CircleShape,
               indicatorColor: Color = MaterialTheme.colorScheme.primary,
@@ -31,36 +30,29 @@ fun TabbedRow(modifier: Modifier = Modifier,
 {
 	Surface(color = containerColor,
 	        shape = containerShape) {
-		SubcomposeLayout(modifier = modifier.selectableGroup()) {constraints ->
-			val measurables: List<Placeable> =
-				subcompose(SubComposeID.PRE_CALCULATE_ITEM,
-				           tab).map {it.measure(constraints)}
-			val count = measurables.size
-			val maxWidth = measurables.maxOf {it.width}
+		SubcomposeLayout(modifier = modifier
+			.selectableGroup()) {constraints ->
+			val rowWidth = constraints.maxWidth
+			val measurables: List<Placeable> = subcompose(SubComposeID.PRE_CALCULATE_ITEM,
+			                                              tab).map {it.measure(constraints)}
+			val tabWidth = rowWidth / measurables.size
 			val maxHeight = measurables.maxOf {it.height}
 
 			val placeables = subcompose(SubComposeID.ITEM,
 			                            tab).map {
-				val c = if (fixedSize) constraints.copy(minWidth = maxWidth,
-				                                        maxWidth = maxWidth,
-				                                        minHeight = maxHeight)
-				else constraints
-				it.measure(c)
+				it.measure(constraints.copy(minWidth = tabWidth,
+				                            maxWidth = tabWidth,
+				                            minHeight = maxHeight,
+				                            maxHeight = maxHeight))
 			}
 
-			val positions = placeables.mapIndexed {idx, placeable ->
-				val x = if (fixedSize) maxWidth * idx
-				else placeables.take(idx)
-					.sumOf {it.width}
-				val itemWidth = if (fixedSize) maxWidth else placeable.width
+			val positions = List(placeables.size) {
+				val x = it * tabWidth
 				TabPosition(offset = x.toDp(),
-				            size = itemWidth.toDp())
+				            size = tabWidth.toDp())
 			}
 
-			val tabRowWidth =
-				if (fixedSize) maxWidth * count else placeables.sumOf {it.width}
-
-			layout(width = tabRowWidth,
+			layout(width = rowWidth,
 			       height = maxHeight) {
 				subcompose(SubComposeID.INDICATOR) {
 					Box(modifier = Modifier
@@ -70,17 +62,14 @@ fun TabbedRow(modifier: Modifier = Modifier,
 						.background(color = indicatorColor,
 						            shape = indicatorShape))
 				}.forEach {
-					it.measure(Constraints.fixed(width = tabRowWidth,
+					it.measure(Constraints.fixed(width = rowWidth,
 					                             height = maxHeight))
 						.placeRelative(x = 0,
 						               y = 0)
 				}
 
 				placeables.forEachIndexed {idx, placeable ->
-					val x = if (fixedSize) maxWidth * idx
-					else placeables.take(idx)
-						.sumOf {it.width}
-					placeable.placeRelative(x = x,
+					placeable.placeRelative(x = tabWidth * idx,
 					                        y = 0)
 				}
 			}
