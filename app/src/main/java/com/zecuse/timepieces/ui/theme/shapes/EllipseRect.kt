@@ -10,6 +10,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
@@ -19,8 +20,9 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 
 /**
- * Creates rectangle shapes with width [w], height [h], and optionally rounded corners with radius [r].
+ * Creates rectangle shapes with width [w], height [h], and optionally at offset [o] and rounded corners with radius [r].
  *
+ * [o] defaults to the top left origin with a value of [Offset.Zero].
  * [r] defaults to sharp corners resulting in normal rectangles.
  *
  * The (x, y) components of [r] should be no larger than half the [w] and [h] values, respectively.
@@ -32,6 +34,7 @@ import androidx.compose.ui.unit.dp
  *
  * @param w The size of the rectangle in the x axis.
  * @param h The size of the rectangle in the y axis.
+ * @param o The point at which the origin is shifted to.
  * @param r The definition of the radii for each corner of the rectangle.
  *
  * @return The optionally rounded rectangle.
@@ -39,6 +42,7 @@ import androidx.compose.ui.unit.dp
 class EllipseRect(
 	private val w: Dp,
 	private val h: Dp,
+	private val o: Offset = Offset.Zero,
 	private val r: FourCorners = FourCorners(),
 ): Shape
 {
@@ -59,7 +63,8 @@ class EllipseRect(
 		val bottomLeft = CornerRadius(x = with(density) {r.bottomLeft.first.toPx()},
 		                              y = with(density) {r.bottomLeft.second.toPx()})
 		val path = Path().apply {
-			addRoundRect(RoundRect(rect = Rect(offset = Offset.Zero,
+			addRoundRect(RoundRect(rect = Rect(offset = o + size.center - Offset(x = width / 2f,
+			                                                                     y = height / 2f),
 			                                   size = Size(width = width,
 			                                               height = height)),
 			                       topLeft = topLeft,
@@ -95,15 +100,19 @@ data class FourCorners(
 /**
  * Helper function to create rectangles with equal corners with different (x, y) radii.
  *
+ * @param offset The point at which the origin is shifted to.
  * @param size The (width, height) of the rectangle.
  * @param corners The (x, y) radii of the corners.
  *
  * @return A rounded rectangle with equal (x, y) radii corners.
  */
-fun MaterialTheme.roundrect(size: Pair<Dp, Dp>, corners: Pair<Dp, Dp>): EllipseRect
+fun MaterialTheme.roundrect(offset: Offset = Offset.Zero,
+                            size: Pair<Dp, Dp>,
+                            corners: Pair<Dp, Dp>): EllipseRect
 {
 	return EllipseRect(w = size.first,
 	                   h = size.second,
+	                   o = offset,
 	                   r = FourCorners(topLeft = corners,
 	                                   topRight = corners,
 	                                   bottomRight = corners,
@@ -113,15 +122,19 @@ fun MaterialTheme.roundrect(size: Pair<Dp, Dp>, corners: Pair<Dp, Dp>): EllipseR
 /**
  * Helper function to create squares with equal corners with different (x, y) radii.
  *
+ * @param offset The point at which the origin is shifted to.
  * @param size The side length of the square.
  * @param corners The (x, y) radii of the corners.
  *
  * @return A rounded square with equal (x, y) radii corners.
  */
-fun MaterialTheme.roundrect(size: Dp, corners: Pair<Dp, Dp>): EllipseRect
+fun MaterialTheme.roundrect(offset: Offset = Offset.Zero,
+                            size: Dp,
+                            corners: Pair<Dp, Dp>): EllipseRect
 {
 	return EllipseRect(w = size,
 	                   h = size,
+	                   o = offset,
 	                   r = FourCorners(topLeft = corners,
 	                                   topRight = corners,
 	                                   bottomRight = corners,
@@ -131,15 +144,19 @@ fun MaterialTheme.roundrect(size: Dp, corners: Pair<Dp, Dp>): EllipseRect
 /**
  * Helper function to create rectangles with equal radii corners.
  *
+ * @param offset The point at which the origin is shifted to.
  * @param size The (width, height) of the rectangle.
  * @param radius The radius of the corners.
  *
  * @return A rounded rectangle with equal radii corners.
  */
-fun MaterialTheme.roundrect(size: Pair<Dp, Dp>, radius: Dp): EllipseRect
+fun MaterialTheme.roundrect(offset: Offset = Offset.Zero,
+                            size: Pair<Dp, Dp>,
+                            radius: Dp): EllipseRect
 {
 	return EllipseRect(w = size.first,
 	                   h = size.second,
+	                   o = offset,
 	                   r = FourCorners(topLeft = Pair(first = radius,
 	                                                  second = radius),
 	                                   topRight = Pair(first = radius,
@@ -153,15 +170,19 @@ fun MaterialTheme.roundrect(size: Pair<Dp, Dp>, radius: Dp): EllipseRect
 /**
  * Helper function to create squares with equal radii corners.
  *
+ * @param offset The point at which the origin is shifted to.
  * @param size The side length of the square.
  * @param radius The radius of the corners.
  *
  * @return A rounded square with equal radii corners.
  */
-fun MaterialTheme.roundrect(size: Dp, radius: Dp): EllipseRect
+fun MaterialTheme.roundrect(offset: Offset = Offset.Zero,
+                            size: Dp,
+                            radius: Dp): EllipseRect
 {
 	return EllipseRect(w = size,
 	                   h = size,
+	                   o = offset,
 	                   r = FourCorners(topLeft = Pair(first = radius,
 	                                                  second = radius),
 	                                   topRight = Pair(first = radius,
@@ -175,29 +196,37 @@ fun MaterialTheme.roundrect(size: Dp, radius: Dp): EllipseRect
 /**
  * Helper function to create rectangles with [FourCorners].
  *
+ * @param offset The point at which the origin is shifted to.
  * @param size The (width, height) of the rectangle.
  * @param radii The [FourCorners] defined corners.
  *
  * @return A rounded rectangle with [FourCorners] defined corners.
  */
-fun MaterialTheme.roundrect(size: Pair<Dp, Dp>, radii: FourCorners): EllipseRect
+fun MaterialTheme.roundrect(offset: Offset = Offset.Zero,
+                            size: Pair<Dp, Dp>,
+                            radii: FourCorners): EllipseRect
 {
 	return EllipseRect(w = size.first,
 	                   h = size.second,
+	                   o = offset,
 	                   r = radii)
 }
 
 /**
  * Helper function to create squares with [FourCorners].
  *
+ * @param offset The point at which the origin is shifted to.
  * @param size The side length of the square.
  * @param radii The [FourCorners] defined corners.
  *
  * @return A rounded square with [FourCorners] defined corners.
  */
-fun MaterialTheme.roundrect(size: Dp, radii: FourCorners): EllipseRect
+fun MaterialTheme.roundrect(offset: Offset = Offset.Zero,
+                            size: Dp,
+                            radii: FourCorners): EllipseRect
 {
 	return EllipseRect(w = size,
 	                   h = size,
+	                   o = offset,
 	                   r = radii)
 }

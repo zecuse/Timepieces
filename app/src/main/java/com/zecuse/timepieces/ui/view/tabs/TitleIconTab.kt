@@ -4,6 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,6 +39,7 @@ fun TitleIconTab(tabsStyle: MyTabs,
 	val selected = idx == pagerState.targetPage
 	val title = @Composable {
 		Text(text = item.title,
+		     color = if (selected) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.primary,
 		     modifier = Modifier.semantics {
 			     contentDescription = item.title
 		     })
@@ -50,6 +52,7 @@ fun TitleIconTab(tabsStyle: MyTabs,
 			val titleIcon = item.title + stringResource(R.string.icon)
 			Icon(painter = painterResource(if (selected) item.selectedIcon else item.unselectedIcon),
 			     contentDescription = titleIcon,
+			     tint = MaterialTheme.colorScheme.primary,
 			     modifier = Modifier
 				     .size(60.dp)
 				     .semantics {

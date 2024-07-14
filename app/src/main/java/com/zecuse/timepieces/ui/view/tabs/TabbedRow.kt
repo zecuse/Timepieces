@@ -4,7 +4,7 @@ import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
@@ -23,7 +23,7 @@ fun TabbedRow(modifier: Modifier = Modifier,
               selectedTabIndex: Int = 0,
               containerColor: Color = MaterialTheme.colorScheme.background,
               containerShape: Shape = CircleShape,
-              indicatorColor: Color = MaterialTheme.colorScheme.primary,
+              indicatorColor: Color = MaterialTheme.colorScheme.secondary,
               indicatorShape: Shape = CircleShape,
               animationSpec: AnimationSpec<Dp> = tween(durationMillis = 250),
               tab: @Composable () -> Unit)
@@ -58,7 +58,7 @@ fun TabbedRow(modifier: Modifier = Modifier,
 					Box(modifier = Modifier
 						.tabIndicator(tabPosition = positions[selectedTabIndex],
 						              animationSpec = animationSpec)
-						.height(maxHeight.toDp())
+						.size(tabWidth.toDp(), maxHeight.toDp())
 						.background(color = indicatorColor,
 						            shape = indicatorShape))
 				}.forEach {

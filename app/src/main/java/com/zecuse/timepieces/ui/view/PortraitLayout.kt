@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.zecuse.timepieces.R
@@ -43,12 +44,15 @@ fun PortraitLayout(tabItems: List<TabItem>,
 {
 	val coScope = rememberCoroutineScope()
 	val pagerState = rememberPagerState {tabItems.size}
-	val indicatorShape = MaterialTheme.roundrect(Pair(50.dp, 75.dp), 5.dp)
+	val indicatorShape = MaterialTheme.roundrect(offset = Offset(x = 0f, y = 80f),
+	                                             size = Pair(75.dp,
+	                                                         25.dp),
+	                                             radius = 15.dp)
 
 	Column(modifier = modifier.fillMaxSize()) {
 		TabbedRow(selectedTabIndex = pagerState.targetPage,
 		          modifier = Modifier.padding(4.dp),
-				  indicatorShape = indicatorShape) {
+		          indicatorShape = indicatorShape) {
 			tabItems.forEachIndexed {idx, item ->
 				TitleIconTab(tabsStyle = settings.state.value.tabsStyle,
 				             idx = idx,
