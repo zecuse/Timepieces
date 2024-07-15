@@ -42,19 +42,31 @@ fun PortraitLayout(tabItems: List<TabItem>,
                    stopwatch: StopwatchViewModel,
                    modifier: Modifier = Modifier)
 {
+	val tabStyle = settings.state.value.tabsStyle
 	val coScope = rememberCoroutineScope()
 	val pagerState = rememberPagerState {tabItems.size}
-	val indicatorShape = MaterialTheme.roundrect(offset = Offset(x = 0f, y = 80f),
-	                                             size = Pair(75.dp,
-	                                                         25.dp),
-	                                             radius = 15.dp)
 
 	Column(modifier = modifier.fillMaxSize()) {
 		TabbedRow(selectedTabIndex = pagerState.targetPage,
 		          modifier = Modifier.padding(4.dp),
-		          indicatorShape = indicatorShape) {
+		          indicatorShape = {
+			          if (tabStyle != MyTabs.Icon)
+			          {
+				          MaterialTheme.roundrect(offset = Offset(x = 0f,
+				                                                  y = if (tabStyle == MyTabs.Both) 86f else 0f),
+				                                  size = Pair(it,
+				                                              25.dp),
+				                                  radius = 15.dp)
+			          }
+			          else
+			          {
+						  // Deliberate empty shape.
+				          MaterialTheme.roundrect(size = 0.dp,
+				                                  radius = 0.dp)
+			          }
+		          }) {
 			tabItems.forEachIndexed {idx, item ->
-				TitleIconTab(tabsStyle = settings.state.value.tabsStyle,
+				TitleIconTab(tabsStyle = tabStyle,
 				             idx = idx,
 				             item = item,
 				             coScope = coScope,
@@ -86,9 +98,10 @@ private fun PortraitPreview()
 		TabItem(title = "first",
 		        selectedIcon = R.drawable.stopwatch_filled,
 		        unselectedIcon = R.drawable.stopwatch_outline),
-		TabItem(title = "second",
+		TabItem(title = "stopwatch",
 		        selectedIcon = R.drawable.hourglass_filled,
 		        unselectedIcon = R.drawable.hourglass_outline),
+		TabItem(title = "third"),
 		TabItem(title = "third"),
 	)
 	TimepiecesTheme {

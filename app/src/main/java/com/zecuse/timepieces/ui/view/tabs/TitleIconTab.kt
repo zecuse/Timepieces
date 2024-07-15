@@ -1,19 +1,26 @@
 package com.zecuse.timepieces.ui.view.tabs
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zecuse.timepieces.R
 import com.zecuse.timepieces.model.TabItem
@@ -39,6 +46,7 @@ fun TitleIconTab(tabsStyle: MyTabs,
 	val selected = idx == pagerState.targetPage
 	val title = @Composable {
 		Text(text = item.title,
+		     fontWeight = FontWeight.SemiBold,
 		     color = if (selected) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.primary,
 		     modifier = Modifier.semantics {
 			     contentDescription = item.title
@@ -67,17 +75,39 @@ fun TitleIconTab(tabsStyle: MyTabs,
 			throw IllegalArgumentException("An unselectedIcon is required")
 		}
 	}
+	val onClick: () -> Unit = {coScope.launch {pagerState.animateScrollToPage(idx)}}
 	when (tabsStyle)
 	{
-		MyTabs.Both  -> Tab(selected = true,
-		                    text = title,
-		                    icon = icon,
-		                    onClick = {coScope.launch {pagerState.animateScrollToPage(idx)}})
-		MyTabs.Icon  -> Tab(selected = true,
-		                    icon = icon,
-		                    onClick = {coScope.launch {pagerState.animateScrollToPage(idx)}})
-		MyTabs.Title -> Tab(selected = true,
-		                    text = title,
-		                    onClick = {coScope.launch {pagerState.animateScrollToPage(idx)}})
+		MyTabs.Both  -> MyTab(onClick = onClick,
+		                      tabStyle = tabsStyle,
+		                      text = title,
+		                      icon = icon)
+		MyTabs.Icon  -> MyTab(onClick = onClick,
+		                      tabStyle = tabsStyle,
+		                      icon = icon)
+		MyTabs.Title -> MyTab(onClick = onClick,
+		                      tabStyle = tabsStyle,
+		                      text = title)
+	}
+}
+
+@Composable
+private fun MyTab(onClick: () -> Unit,
+                  tabStyle: MyTabs,
+                  modifier: Modifier = Modifier,
+                  text: @Composable() (() -> Unit)? = null,
+                  icon: @Composable() (() -> Unit)? = null)
+{
+	Column(verticalArrangement = Arrangement.Center,
+	       horizontalAlignment = Alignment.CenterHorizontally,
+	       modifier = modifier.selectable(selected = true,
+	                                      role = Role.Tab,
+	                                      onClick = onClick)) {
+		if (icon != null)
+		{
+			icon()
+			if (tabStyle == MyTabs.Both) Spacer(modifier = Modifier.height(4.dp))
+		}
+		if (text != null) text()
 	}
 }
