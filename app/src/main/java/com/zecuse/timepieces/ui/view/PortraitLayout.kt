@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -38,13 +39,13 @@ import com.zecuse.timepieces.viewmodel.StopwatchViewModel
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PortraitLayout(tabItems: List<TabItem>,
+                   pagerState: PagerState,
                    settings: SettingsViewModel,
                    stopwatch: StopwatchViewModel,
                    modifier: Modifier = Modifier)
 {
 	val tabStyle = settings.state.value.tabsStyle
 	val coScope = rememberCoroutineScope()
-	val pagerState = rememberPagerState {tabItems.size}
 
 	Column(modifier = modifier.fillMaxSize()) {
 		TabbedRow(selectedTabIndex = pagerState.targetPage,
@@ -86,6 +87,7 @@ fun PortraitLayout(tabItems: List<TabItem>,
 	}
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Preview
 @Composable
 private fun PortraitPreview()
@@ -105,7 +107,9 @@ private fun PortraitPreview()
 		TabItem(title = "third"),
 	)
 	TimepiecesTheme {
+		val pagerState = rememberPagerState {tabs.size}
 		PortraitLayout(tabItems = tabs,
+		               pagerState = pagerState,
 		               settings = fakeSettings,
 		               stopwatch = fakeStopwatch)
 	}

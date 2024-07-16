@@ -12,6 +12,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonArray
+import java.util.ArrayDeque
+import java.util.Queue
 
 @Dao
 interface AppDao
@@ -50,7 +53,7 @@ class FakeDao: AppDao
 		fakeSettings["tabs"] = MyTabs.Both
 
 		fakeStopwatch["elapsedTime"] = 0L
-		fakeStopwatch["laps"] = "[0L]"
+		fakeStopwatch["laps"] = "[0]"
 	}
 
 	override suspend fun updateSetting(settings: SettingsData)
@@ -77,7 +80,12 @@ class FakeDao: AppDao
 
 	override fun getStopwatch(): Flow<StopwatchData?>
 	{
+		val laps: Queue<Long> = ArrayDeque()
+		Json.parseToJsonElement(fakeStopwatch["laps"] as String).jsonArray.map {
+			laps.offer(it.toString()
+				           .toLong())
+		}
 		return MutableStateFlow(StopwatchData(elapsedTime = fakeStopwatch["elapsedTime"] as Long,
-		                                      laps = Json.decodeFromString(fakeStopwatch["laps"] as String)))
+		                                      laps = laps))
 	}
 }

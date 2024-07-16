@@ -57,7 +57,7 @@ fun TitleIconTab(tabsStyle: MyTabs,
 		{
 			val isSelected = stringResource(R.string.is_selected)
 			val unSelected = stringResource(R.string.is_not_selected)
-			val titleIcon = item.title + stringResource(R.string.icon)
+			val titleIcon = "${item.title} ${stringResource(R.string.icon)}"
 			Icon(painter = painterResource(if (selected) item.selectedIcon else item.unselectedIcon),
 			     contentDescription = titleIcon,
 			     tint = MaterialTheme.colorScheme.primary,
@@ -65,7 +65,7 @@ fun TitleIconTab(tabsStyle: MyTabs,
 				     .size(60.dp)
 				     .semantics {
 					     stateDescription =
-						     if (selected) titleIcon + isSelected else titleIcon + unSelected
+						     if (selected) "$titleIcon $isSelected" else "$titleIcon $unSelected"
 				     })
 		}
 		else if ((item.selectedIcon == null) xor (item.unselectedIcon == null))
@@ -95,8 +95,8 @@ fun TitleIconTab(tabsStyle: MyTabs,
 private fun MyTab(onClick: () -> Unit,
                   tabStyle: MyTabs,
                   modifier: Modifier = Modifier,
-                  text: @Composable() (() -> Unit)? = null,
-                  icon: @Composable() (() -> Unit)? = null)
+                  text: @Composable (() -> Unit)? = null,
+                  icon: @Composable (() -> Unit)? = null)
 {
 	Column(verticalArrangement = Arrangement.Center,
 	       horizontalAlignment = Alignment.CenterHorizontally,

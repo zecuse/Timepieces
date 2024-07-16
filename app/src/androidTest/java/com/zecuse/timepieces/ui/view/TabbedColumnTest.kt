@@ -1,5 +1,6 @@
 package com.zecuse.timepieces.ui.view
 
+import android.content.pm.ActivityInfo
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -24,7 +25,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
-class TabbedRowTest
+class TabbedColumnTest
 {
 	@get:Rule
 	val rule = createAndroidComposeRule<ComponentActivity>()
@@ -54,13 +55,14 @@ class TabbedRowTest
 		settings = SettingsViewModel(fakeDao)
 		settings.onEvent(SettingsEvent.SetTabs(MyTabs.Both))
 		stopwatch = StopwatchViewModel(fakeDao)
+		rule.activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 		rule.setContent {
 			TimepiecesTheme(settings = settings.state.value) {
 				val pagerState = rememberPagerState {tabs.size}
 				Box(modifier = Modifier
 					.fillMaxSize()
 					.background(color = MaterialTheme.colorScheme.background)) {
-					PortraitLayout(tabItems = tabs,
+					LandscapeLayout(tabItems = tabs,
 					               pagerState = pagerState,
 					               settings = settings,
 					               stopwatch = stopwatch)

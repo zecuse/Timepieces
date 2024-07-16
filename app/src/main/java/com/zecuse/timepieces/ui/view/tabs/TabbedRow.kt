@@ -51,8 +51,7 @@ fun TabbedRow(modifier: Modifier = Modifier,
 			}
 
 			val positions = List(placeables.size) {
-				val x = it * tabWidth
-				TabPosition(offset = x.toDp(),
+				TabPosition(offset = (it * tabWidth).toDp(),
 				            size = tabWidth.toDp())
 			}
 

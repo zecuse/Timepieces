@@ -5,6 +5,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.room.Room
 import com.zecuse.timepieces.R
@@ -28,6 +30,7 @@ class MainActivity: ComponentActivity()
 	private val settingsModel by viewModels<SettingsViewModel>(factoryProducer = {SettingsFactory(db)})
 	private val stopwatchModel by viewModels<StopwatchViewModel>(factoryProducer = {StopwatchFactory(db)})
 
+	@OptIn(ExperimentalFoundationApi::class)
 	override fun onCreate(savedInstanceState: Bundle?)
 	{
 		super.onCreate(savedInstanceState)
@@ -46,14 +49,17 @@ class MainActivity: ComponentActivity()
 			        unselectedIcon = R.drawable.hourglass_outline),
 		)
 		setContent {
+			val pagerState = rememberPagerState {tabs.size}
 			val configuration = LocalConfiguration.current
 			TimepiecesTheme(settingsModel.state.value) {
 				when (configuration.orientation)
 				{
 					Configuration.ORIENTATION_LANDSCAPE -> LandscapeLayout(tabItems = tabs,
+					                                                       pagerState = pagerState,
 					                                                       settings = settingsModel,
 					                                                       stopwatch = stopwatchModel)
 					else                                -> PortraitLayout(tabItems = tabs,
+					                                                      pagerState = pagerState,
 					                                                      settings = settingsModel,
 					                                                      stopwatch = stopwatchModel)
 				}
