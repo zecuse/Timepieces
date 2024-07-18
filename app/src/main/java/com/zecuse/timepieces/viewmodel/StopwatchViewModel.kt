@@ -29,8 +29,8 @@ class StopwatchViewModel(private val dao: AppDao): ViewModel()
 	{
 		when (event)
 		{
-			StopwatchEvent.ClearLaps     -> state.apply {this.value.laps.clear()}
-			StopwatchEvent.ResetOrLap    ->
+			StopwatchEvent.ClearLaps  -> state.apply {this.value.laps.clear()}
+			StopwatchEvent.LapOrReset ->
 			{
 				if (state.value.ticking)
 				{
@@ -52,7 +52,7 @@ class StopwatchViewModel(private val dao: AppDao): ViewModel()
 			{
 				if (state.value.ticking)
 				{
-					val elapsed = System.currentTimeMillis() - state.value.startTime
+					val elapsed = System.currentTimeMillis() - state.value.startTime + state.value.elapsedTime
 					state.apply {
 						this.value = this.value.copy(ticking = false,
 						                             elapsedTime = elapsed)
