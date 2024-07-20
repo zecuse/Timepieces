@@ -45,7 +45,7 @@ fun StopwatchView(stopwatch: StopwatchViewModel)
 {
 	Box(contentAlignment = Alignment.Center,
 	    modifier = Modifier.fillMaxSize()) {
-		val hasLaps = stopwatch.state.value.laps.isNotEmpty()
+		val hasLaps = stopwatch.state.value.lapCnt != 0
 		val alignment = if (hasLaps) Alignment.TopCenter else Alignment.Center
 		val tPad = animateDpAsState(targetValue = if (hasLaps) 50.dp else 0.dp,
 		                            animationSpec = tween(durationMillis = 200),
@@ -55,8 +55,14 @@ fun StopwatchView(stopwatch: StopwatchViewModel)
 			            .animatePlacement()
 			            .align(alignment)
 			            .padding(top = tPad.value))
-		if (hasLaps) DisplayLaps(stopwatch = stopwatch,
-		                         modifier = Modifier.fillMaxHeight(0.68f))
+		AnimatedVisibility(
+			visible = hasLaps,
+			enter = fadeIn(animationSpec = tween(durationMillis = stopwatch.duration)),
+			exit = fadeOut(animationSpec = tween(durationMillis = stopwatch.duration)),
+		) {
+			DisplayLaps(stopwatch = stopwatch,
+			            modifier = Modifier.fillMaxHeight(0.68f))
+		}
 		Controls(stopwatch = stopwatch,
 		         modifier = Modifier
 			         .align(Alignment.BottomCenter)
@@ -127,7 +133,7 @@ fun Controls(stopwatch: StopwatchViewModel, modifier: Modifier = Modifier)
 	val toggleTicking = {stopwatch.onEvent(StopwatchEvent.ToggleTicking)}
 	val lapOrReset = {stopwatch.onEvent(StopwatchEvent.LapOrReset)}
 	val state = stopwatch.state.value
-	val duration = 200
+	val duration = 250
 	val buttonWidth = 100
 	val widthAnim =
 		animateDpAsState(targetValue = if (state.startTime != 0L) (3 * buttonWidth).dp else buttonWidth.dp,

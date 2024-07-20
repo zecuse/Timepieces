@@ -11,7 +11,9 @@ import java.util.Queue
 data class StopwatchState(val ticking: Boolean = false,
                           val startTime: Long = 0L,
                           val elapsedTime: Long = 0L,
-                          val laps: Queue<Long> = ArrayDeque())
+                          val maxLaps: Int = 50,
+                          val laps: Queue<Long> = ArrayDeque(),
+                          val lapCnt: Int = 0)
 
 @Entity
 data class StopwatchData(@PrimaryKey(autoGenerate = true)
