@@ -25,10 +25,6 @@ import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -64,7 +60,8 @@ fun StopwatchView(stopwatch: StopwatchViewModel, landscape: Boolean = false)
 			       horizontalAlignment = Alignment.CenterHorizontally,
 			       modifier = Modifier
 				       .animatePlacement()
-				       .align(alignment).fillMaxWidth(0.5f)) {
+				       .align(alignment)
+				       .fillMaxWidth(0.5f)) {
 				DisplayTime(stopwatch = stopwatch)
 				Spacer(modifier = Modifier.height(50.dp))
 				Controls(stopwatch = stopwatch)
@@ -99,21 +96,18 @@ fun StopwatchView(stopwatch: StopwatchViewModel, landscape: Boolean = false)
 fun DisplayTime(stopwatch: StopwatchViewModel, modifier: Modifier = Modifier)
 {
 	val state = stopwatch.state.value
-	var time by remember {
-		mutableLongStateOf(0L)
-	}
-	LaunchedEffect(key1 = time,
+	LaunchedEffect(key1 = state.currentTime,
 	               key2 = state.ticking) {
 		if (state.ticking)
 		{
 			delay(10L)
-			time = System.currentTimeMillis() - state.startTime + state.elapsedTime
+			stopwatch.onEvent(StopwatchEvent.SetTime(System.currentTimeMillis() - state.startTime + state.elapsedTime))
 		}
 	}
 	LaunchedEffect(key1 = state.startTime) {
-		if (state.startTime == 0L) time = 0L
+		if (state.startTime == 0L) stopwatch.onEvent(StopwatchEvent.SetTime(0L))
 	}
-	val point = TimePoint(time)
+	val point = TimePoint(state.currentTime)
 	Text(text = point.toString(),
 	     color = MaterialTheme.colorScheme.primary,
 	     style = MaterialTheme.typography.displayMedium,

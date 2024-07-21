@@ -32,8 +32,11 @@ class StopwatchViewModel(private val dao: AppDao): ViewModel()
 		val stopwatch = state.value
 		when (event)
 		{
-			StopwatchEvent.ClearLaps     -> state.apply {this.value.laps.clear()}
-			StopwatchEvent.LapOrReset    ->
+			StopwatchEvent.ClearLaps  -> state.apply {this.value.laps.clear()}
+			is StopwatchEvent.SetTime -> state.apply {
+				this.value = this.value.copy(currentTime = event.time)
+			}
+			StopwatchEvent.LapOrReset ->
 			{
 				if (stopwatch.ticking)
 				{
