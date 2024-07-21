@@ -7,10 +7,13 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -43,32 +46,52 @@ import com.zecuse.timepieces.viewmodel.StopwatchViewModel
 import kotlinx.coroutines.delay
 
 @Composable
-fun StopwatchView(stopwatch: StopwatchViewModel)
+fun StopwatchView(stopwatch: StopwatchViewModel, landscape: Boolean = false)
 {
-	Box(contentAlignment = Alignment.Center,
+	Box(contentAlignment = if (landscape) Alignment.CenterStart else Alignment.Center,
 	    modifier = Modifier.fillMaxSize()) {
 		val hasLaps = stopwatch.state.value.lapCnt != 0
-		val alignment = if (hasLaps) Alignment.TopCenter else Alignment.Center
-		val tPad = animateDpAsState(targetValue = if (hasLaps) 50.dp else 0.dp,
-		                            animationSpec = tween(durationMillis = 200),
-		                            label = "Top padding")
-		DisplayTime(stopwatch = stopwatch,
-		            modifier = Modifier
-			            .animatePlacement()
-			            .align(alignment)
-			            .padding(top = tPad.value))
-		AnimatedVisibility(
-			visible = hasLaps,
-			enter = fadeIn(animationSpec = tween(durationMillis = stopwatch.duration)),
-			exit = fadeOut(animationSpec = tween(durationMillis = stopwatch.duration)),
-		) {
-			DisplayLaps(stopwatch = stopwatch,
-			            modifier = Modifier.fillMaxHeight(0.68f))
+		if (landscape)
+		{
+			val alignment = if (hasLaps) Alignment.CenterEnd else Alignment.Center
+			AnimatedVisibility(visible = hasLaps,
+			                   enter = fadeIn(animationSpec = tween(durationMillis = stopwatch.duration)),
+			                   exit = fadeOut(animationSpec = tween(durationMillis = stopwatch.duration))) {
+				DisplayLaps(stopwatch = stopwatch,
+				            modifier = Modifier.fillMaxWidth(0.5f))
+			}
+			Column(verticalArrangement = Arrangement.Center,
+			       horizontalAlignment = Alignment.CenterHorizontally,
+			       modifier = Modifier
+				       .animatePlacement()
+				       .align(alignment).fillMaxWidth(0.5f)) {
+				DisplayTime(stopwatch = stopwatch)
+				Spacer(modifier = Modifier.height(50.dp))
+				Controls(stopwatch = stopwatch)
+			}
 		}
-		Controls(stopwatch = stopwatch,
-		         modifier = Modifier
-			         .align(Alignment.BottomCenter)
-			         .padding(bottom = 50.dp))
+		else
+		{
+			val alignment = if (hasLaps) Alignment.TopCenter else Alignment.Center
+			val tPad = animateDpAsState(targetValue = if (hasLaps) 50.dp else 0.dp,
+			                            animationSpec = tween(durationMillis = 200),
+			                            label = "Top padding")
+			DisplayTime(stopwatch = stopwatch,
+			            modifier = Modifier
+				            .animatePlacement()
+				            .align(alignment)
+				            .padding(top = tPad.value))
+			AnimatedVisibility(visible = hasLaps,
+			                   enter = fadeIn(animationSpec = tween(durationMillis = stopwatch.duration)),
+			                   exit = fadeOut(animationSpec = tween(durationMillis = stopwatch.duration))) {
+				DisplayLaps(stopwatch = stopwatch,
+				            modifier = Modifier.fillMaxHeight(0.68f))
+			}
+			Controls(stopwatch = stopwatch,
+			         modifier = Modifier
+				         .align(Alignment.BottomCenter)
+				         .padding(bottom = 50.dp))
+		}
 	}
 }
 

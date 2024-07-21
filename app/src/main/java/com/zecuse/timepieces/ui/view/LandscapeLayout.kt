@@ -80,7 +80,8 @@ fun LandscapeLayout(tabItems: List<TabItem>,
 			{
 				0 -> AlarmView()
 				1 -> ClockView()
-				2 -> StopwatchView(stopwatch)
+				2 -> StopwatchView(stopwatch = stopwatch,
+				                   landscape = true)
 				3 -> TimerView()
 			}
 		}
