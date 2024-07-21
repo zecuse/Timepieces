@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
@@ -99,7 +100,12 @@ fun DisplayTime(stopwatch: StopwatchViewModel, modifier: Modifier = Modifier)
 fun DisplayLaps(stopwatch: StopwatchViewModel, modifier: Modifier = Modifier)
 {
 	val laps = stopwatch.state.value.laps
-	LazyColumn(horizontalAlignment = Alignment.CenterHorizontally,
+	val listState = rememberLazyListState()
+	LaunchedEffect(key1 = laps.count()) {
+		listState.animateScrollToItem(laps.count() - 1)
+	}
+	LazyColumn(state = listState,
+	           horizontalAlignment = Alignment.CenterHorizontally,
 	           verticalArrangement = Arrangement.Top,
 	           reverseLayout = true,
 	           modifier = modifier) {
