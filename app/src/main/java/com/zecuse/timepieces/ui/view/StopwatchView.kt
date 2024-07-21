@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
@@ -28,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -35,7 +37,6 @@ import com.zecuse.timepieces.R
 import com.zecuse.timepieces.database.FakeDao
 import com.zecuse.timepieces.model.TimePoint
 import com.zecuse.timepieces.ui.theme.TimepiecesTheme
-import com.zecuse.timepieces.ui.view.utils.BoldButton
 import com.zecuse.timepieces.ui.view.utils.animatePlacement
 import com.zecuse.timepieces.viewmodel.StopwatchEvent
 import com.zecuse.timepieces.viewmodel.StopwatchViewModel
@@ -146,22 +147,24 @@ fun Controls(stopwatch: StopwatchViewModel, modifier: Modifier = Modifier)
 		                 animationSpec = tween(durationMillis = duration),
 		                 label = "Space width")
 	Box(modifier = modifier.width(widthAnim.value)) {
-		BoldButton(onClick = toggleTicking,
-		           modifier = Modifier
-			           .align(Alignment.CenterStart)
-			           .width(buttonWidth.dp)) {
-			if (state.ticking) Text(text = stringResource(R.string.pause))
-			else if (state.startTime != 0L) Text(text = stringResource(R.string.resume))
-			else Text(text = stringResource(R.string.start))
+		Button(onClick = toggleTicking,
+		       modifier = Modifier
+			       .align(Alignment.CenterStart)
+			       .width(buttonWidth.dp)) {
+			Text(text = if (state.ticking) stringResource(R.string.pause)
+			else if (state.startTime != 0L) stringResource(R.string.resume)
+			else stringResource(R.string.start),
+			     fontWeight = FontWeight.SemiBold)
 		}
 		AnimatedVisibility(visible = state.startTime != 0L,
 		                   enter = fadeIn(animationSpec = tween(durationMillis = duration)),
 		                   exit = fadeOut(animationSpec = tween(durationMillis = duration)),
 		                   modifier = Modifier.align(Alignment.CenterEnd)) {
-			BoldButton(onClick = lapOrReset,
-			           modifier = Modifier.width(buttonWidth.dp)) {
-				if (state.ticking) Text(text = stringResource(R.string.lap))
-				else Text(text = stringResource(R.string.reset))
+			Button(onClick = lapOrReset,
+			       modifier = Modifier.width(buttonWidth.dp)) {
+				Text(text = if (state.ticking) stringResource(R.string.lap)
+				else stringResource(R.string.reset),
+				     fontWeight = FontWeight.SemiBold)
 			}
 		}
 	}
