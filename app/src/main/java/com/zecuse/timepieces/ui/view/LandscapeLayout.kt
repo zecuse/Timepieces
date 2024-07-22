@@ -45,6 +45,13 @@ import com.zecuse.timepieces.viewmodel.StopwatchViewModel
  * A clock defined in [ClockView]
  * A stopwatch defined in [StopwatchView]
  * A timer defined in [TimerView]
+ *
+ * @param tabItems A list of items to display in the [TabbedColumn].
+ * @param pagerState The [PagerState] for the [VerticalPager].
+ * This is shared with the [PortraitLayout], so they will be synced.
+ * @param settings The current state of the [SettingsViewModel].
+ * @param stopwatch The current state of the [StopwatchViewModel].
+ * @param modifier Any modifiers to be applied to the [Row] composing the main view.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -62,10 +69,10 @@ fun LandscapeLayout(tabItems: List<TabItem>,
 		            enter = slideInHorizontally(tween(durationMillis = stopwatch.duration)) {-it},
 		            exit = slideOutHorizontally(tween(durationMillis = stopwatch.duration)) {-it},
 		            left = true,
+		            alignment = Alignment.CenterStart,
 		            tabItems = tabItems,
 		            pagerState = pagerState,
 		            settings = settings,
-		            alignment = Alignment.CenterStart,
 		            modifier = Modifier.width(65.dp))
 		VerticalPager(state = pagerState,
 		              modifier = Modifier.weight(1f)) {
@@ -83,24 +90,43 @@ fun LandscapeLayout(tabItems: List<TabItem>,
 		            enter = slideInHorizontally(tween(durationMillis = stopwatch.duration)) {it},
 		            exit = slideOutHorizontally(tween(durationMillis = stopwatch.duration)) {it},
 		            left = false,
+		            alignment = Alignment.CenterEnd,
 		            tabItems = tabItems,
 		            pagerState = pagerState,
 		            settings = settings,
-		            alignment = Alignment.CenterEnd,
 		            modifier = Modifier.width(65.dp))
 	}
 }
 
+/**
+ * Displays either the [HandButton] or the tabs for the [TabbedColumn].
+ *
+ * These are composed in a [Box] so they can be drawn over each other,
+ * the [HandButton] below the [TabbedColumn].
+ *
+ * Both of those use the same transitions for their [AnimatedVisibility] composables,
+ * but they have opposite visibility.
+ *
+ * @param visible The visibility for the [AnimatedVisibility].
+ * @param enter The [EnterTransition] for the [AnimatedVisibility].
+ * @param exit The [ExitTransition] for the [AnimatedVisibility].
+ * @param left If the [HandButton] is a left or right hand.
+ * @param alignment The alignment the [Box] will use.
+ * @param tabItems Passed down to the [Tabs] composable.
+ * @param pagerState Passed down to the [Tabs] composable.
+ * @param settings Passed down to the [Tabs] composable.
+ * @param modifier Any [Modifier]s to be applied to the [Box].
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TabControls(visible: Boolean,
                 enter: EnterTransition,
                 exit: ExitTransition,
                 left: Boolean,
+                alignment: Alignment,
                 tabItems: List<TabItem>,
                 pagerState: PagerState,
                 settings: SettingsViewModel,
-                alignment: Alignment,
                 modifier: Modifier = Modifier)
 {
 	val switchHands = {settings.onEvent(SettingsEvent.ToggleHandedness)}
@@ -121,6 +147,14 @@ fun TabControls(visible: Boolean,
 	}
 }
 
+/**
+ * Displays the tabs for the [TabbedColumn].
+ *
+ * @param tabItems A list of items to display in the [TabbedColumn].
+ * @param pagerState The [PagerState] for the [VerticalPager].
+ * This is shared with the [PortraitLayout], so they will be synced.
+ * @param settings The current state of the [SettingsViewModel].
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Tabs(tabItems: List<TabItem>, pagerState: PagerState, settings: SettingsViewModel)

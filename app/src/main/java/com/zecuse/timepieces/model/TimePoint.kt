@@ -1,5 +1,11 @@
 package com.zecuse.timepieces.model
 
+/**
+ * Small utility class to convert a [Long] time value to the human friendly format:
+ * HH:MM:SS.mm
+ *
+ * @param time The time to convert.
+ */
 class TimePoint(time: Long = 0L)
 {
 	val millis = (time / 10) % 100

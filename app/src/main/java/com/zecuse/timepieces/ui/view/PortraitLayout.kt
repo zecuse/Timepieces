@@ -35,6 +35,13 @@ import com.zecuse.timepieces.viewmodel.StopwatchViewModel
  * A clock defined in [ClockView]
  * A stopwatch defined in [StopwatchView]
  * A timer defined in [TimerView]
+ *
+ * @param tabItems A list of items to display in the [TabbedRow].
+ * @param pagerState The [PagerState] for the [HorizontalPager].
+ * This is shared with the [LandscapeLayout], so they will be synced.
+ * @param settings The current state of the [SettingsViewModel].
+ * @param stopwatch The current state of the [StopwatchViewModel].
+ * @param modifier Any [Modifier]s to be applied to the [Column] composing the main view.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

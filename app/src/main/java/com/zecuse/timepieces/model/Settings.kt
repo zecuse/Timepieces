@@ -11,7 +11,7 @@ import com.zecuse.timepieces.ui.view.tabs.MyTabs
 import com.zecuse.timepieces.viewmodel.SettingsViewModel
 
 /**
- * The backing state of the [SettingsViewModel]
+ * The backing state of the [SettingsViewModel].
  *
  * @param theme The current theme of the app. See [AppTheme] for valid values.
  * @param color The current color of the app. See [AppColor] for valid values.

@@ -62,13 +62,13 @@ fun StopwatchView(stopwatch: StopwatchViewModel,
 			DisplayLaps(stopwatch = stopwatch,
 			            modifier = Modifier.fillMaxWidth(0.5f),
 			            animModifier = Modifier
-				            .animatePlacement()
-				            .align(lapAlignment))
+				            .align(lapAlignment)
+				            .animatePlacement())
 			Column(verticalArrangement = Arrangement.Center,
 			       horizontalAlignment = Alignment.CenterHorizontally,
 			       modifier = Modifier
-				       .animatePlacement()
 				       .align(controlAlignment)
+				       .animatePlacement()
 				       .fillMaxWidth(0.5f)) {
 				DisplayTime(stopwatch = stopwatch)
 				Spacer(modifier = Modifier.height(50.dp))
@@ -84,8 +84,8 @@ fun StopwatchView(stopwatch: StopwatchViewModel,
 			                            label = "Top padding")
 			DisplayTime(stopwatch = stopwatch,
 			            modifier = Modifier
-				            .animatePlacement()
 				            .align(alignment)
+				            .animatePlacement()
 				            .padding(top = tPad.value))
 			DisplayLaps(stopwatch = stopwatch,
 			            modifier = Modifier.fillMaxHeight(0.68f))

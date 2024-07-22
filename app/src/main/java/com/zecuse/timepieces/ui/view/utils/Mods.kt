@@ -5,6 +5,7 @@ import androidx.compose.animation.core.AnimationVector2D
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,6 +20,9 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.round
 import kotlinx.coroutines.launch
 
+/**
+ * A [Modifier] that animates the placement of a composable within its [Box] parent.
+ */
 fun Modifier.animatePlacement(): Modifier = composed {
 	val scope = rememberCoroutineScope()
 	var targetOffset by remember {mutableStateOf(IntOffset.Zero)}

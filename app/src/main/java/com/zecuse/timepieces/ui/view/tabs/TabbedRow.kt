@@ -21,6 +21,22 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
+/**
+ * Creates a horizontal row of equally spaced tabs.
+ *
+ * The [indicatorShape] is drawn over the the [containerShape] and below the [tabs] and
+ * can be removed by providing a lambda that doesn't draw anything. This lambda accepts a [Dp]
+ * value that equals the width the tab will have available to it.
+ *
+ * @param modifier The [Modifier] to be applied to the row itself.
+ * @param selectedTabIndex The index of the currently selected tab. Defaults to the first.
+ * @param containerColor The background color for the row. Defaults to the current Material color scheme's background.
+ * @param containerShape The shape to clip the row to. Defaults to [RectangleShape].
+ * @param indicatorColor The background color for the [selectedTabIndex]. Defaults to the current Material color scheme's secondary.
+ * @param indicatorShape The shape to clip the indicator to. Defaults to [CircleShape].
+ * @param animationSpec The [AnimationSpec] used by the indicator. Defaults to a 250ms [tween].
+ * @param tabs The tabs to display within the row.
+ */
 @Composable
 fun TabbedRow(modifier: Modifier = Modifier,
               selectedTabIndex: Int = 0,
@@ -29,7 +45,7 @@ fun TabbedRow(modifier: Modifier = Modifier,
               indicatorColor: Color = MaterialTheme.colorScheme.secondary,
               indicatorShape: (Dp) -> Shape = {CircleShape},
               animationSpec: AnimationSpec<Dp> = tween(durationMillis = 250),
-              tab: @Composable () -> Unit)
+              tabs: @Composable () -> Unit)
 {
 	Surface(color = containerColor,
 	        shape = containerShape,
@@ -38,12 +54,12 @@ fun TabbedRow(modifier: Modifier = Modifier,
 			.selectableGroup()) {constraints ->
 			val rowWidth = constraints.maxWidth
 			val measurables: List<Placeable> = subcompose(SubComposeID.PRE_CALCULATE_ITEM,
-			                                              tab).map {it.measure(constraints)}
+			                                              tabs).map {it.measure(constraints)}
 			val tabWidth = rowWidth / measurables.size
 			val maxHeight = measurables.maxOf {it.height}
 
 			val placeables = subcompose(SubComposeID.ITEM,
-			                            tab).map {
+			                            tabs).map {
 				it.measure(constraints.copy(minWidth = tabWidth,
 				                            maxWidth = tabWidth,
 				                            minHeight = maxHeight,
