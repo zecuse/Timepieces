@@ -61,7 +61,7 @@ fun PortraitLayout(tabItems: List<TabItem>,
 			          }
 			          else
 			          {
-						  // Deliberate empty shape.
+				          // Deliberate empty shape.
 				          MaterialTheme.roundrect(size = 0.dp,
 				                                  radius = 0.dp)
 			          }
@@ -80,7 +80,8 @@ fun PortraitLayout(tabItems: List<TabItem>,
 			{
 				0 -> AlarmView()
 				1 -> ClockView()
-				2 -> StopwatchView(stopwatch)
+				2 -> StopwatchView(stopwatch = stopwatch,
+				                   leftHand = settings.state.value.leftHanded)
 				3 -> TimerView()
 			}
 		}

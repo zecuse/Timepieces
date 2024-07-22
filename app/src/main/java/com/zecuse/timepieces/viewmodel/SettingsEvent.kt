@@ -33,5 +33,5 @@ sealed interface SettingsEvent
 	/**
 	 * Toggles the handedness in landscape mode.
 	 */
-	data class SetHandedness(val leftHanded: Boolean): SettingsEvent
+	data object ToggleHandedness: SettingsEvent
 }

@@ -1,9 +1,17 @@
 package com.zecuse.timepieces.ui.view
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -47,14 +55,18 @@ fun LandscapeLayout(tabItems: List<TabItem>,
                     modifier: Modifier = Modifier)
 {
 	val leftHand = settings.state.value.leftHanded
-	val switchHands = {settings.onEvent(SettingsEvent.SetHandedness(!leftHand))}
 
 	Row(verticalAlignment = Alignment.CenterVertically,
 	    modifier = modifier.fillMaxSize()) {
-		if (leftHand) HandButton(leftHand) {switchHands()}
-		else Tabs(tabItems,
-		          pagerState,
-		          settings)
+		TabControls(visible = leftHand,
+		            enter = slideInHorizontally(tween(durationMillis = stopwatch.duration)) {-it},
+		            exit = slideOutHorizontally(tween(durationMillis = stopwatch.duration)) {-it},
+		            left = true,
+		            tabItems = tabItems,
+		            pagerState = pagerState,
+		            settings = settings,
+		            alignment = Alignment.CenterStart,
+		            modifier = Modifier.width(65.dp))
 		VerticalPager(state = pagerState,
 		              modifier = Modifier.weight(1f)) {
 			when (pagerState.targetPage)
@@ -62,14 +74,50 @@ fun LandscapeLayout(tabItems: List<TabItem>,
 				0 -> AlarmView()
 				1 -> ClockView()
 				2 -> StopwatchView(stopwatch = stopwatch,
+				                   leftHand = leftHand,
 				                   landscape = true)
 				3 -> TimerView()
 			}
 		}
-		if (!leftHand) HandButton(leftHand) {switchHands()}
-		else Tabs(tabItems,
-		          pagerState,
-		          settings)
+		TabControls(visible = !leftHand,
+		            enter = slideInHorizontally(tween(durationMillis = stopwatch.duration)) {it},
+		            exit = slideOutHorizontally(tween(durationMillis = stopwatch.duration)) {it},
+		            left = false,
+		            tabItems = tabItems,
+		            pagerState = pagerState,
+		            settings = settings,
+		            alignment = Alignment.CenterEnd,
+		            modifier = Modifier.width(65.dp))
+	}
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun TabControls(visible: Boolean,
+                enter: EnterTransition,
+                exit: ExitTransition,
+                left: Boolean,
+                tabItems: List<TabItem>,
+                pagerState: PagerState,
+                settings: SettingsViewModel,
+                alignment: Alignment,
+                modifier: Modifier = Modifier)
+{
+	val switchHands = {settings.onEvent(SettingsEvent.ToggleHandedness)}
+	Box(contentAlignment = alignment,
+	    modifier = modifier) {
+		AnimatedVisibility(visible = visible,
+		                   enter = enter,
+		                   exit = exit) {
+			HandButton(left) {switchHands()}
+		}
+		AnimatedVisibility(visible = !visible,
+		                   enter = enter,
+		                   exit = exit) {
+			Tabs(tabItems,
+			     pagerState,
+			     settings)
+		}
 	}
 }
 

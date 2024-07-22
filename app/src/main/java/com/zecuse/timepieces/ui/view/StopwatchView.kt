@@ -42,29 +42,38 @@ import com.zecuse.timepieces.viewmodel.StopwatchViewModel
 import kotlinx.coroutines.delay
 
 @Composable
-fun StopwatchView(stopwatch: StopwatchViewModel, landscape: Boolean = false)
+fun StopwatchView(stopwatch: StopwatchViewModel,
+                  leftHand: Boolean,
+                  landscape: Boolean = false)
 {
-	Box(contentAlignment = if (landscape) Alignment.CenterStart else Alignment.Center,
+	Box(contentAlignment = Alignment.Center,
 	    modifier = Modifier.fillMaxSize()) {
 		val hasLaps = stopwatch.state.value.lapCnt != 0
 		if (landscape)
 		{
-			val alignment = if (hasLaps) Alignment.CenterEnd else Alignment.Center
-			AnimatedVisibility(visible = hasLaps,
-			                   enter = fadeIn(animationSpec = tween(durationMillis = stopwatch.duration)),
-			                   exit = fadeOut(animationSpec = tween(durationMillis = stopwatch.duration))) {
-				DisplayLaps(stopwatch = stopwatch,
-				            modifier = Modifier.fillMaxWidth(0.5f))
+			val controlAlignment = if (hasLaps)
+			{
+				if (leftHand) Alignment.CenterEnd
+				else Alignment.CenterStart
 			}
+			else Alignment.Center
+			val lapAlignment = if (leftHand) Alignment.CenterStart
+			else Alignment.CenterEnd
+			DisplayLaps(stopwatch = stopwatch,
+			            modifier = Modifier.fillMaxWidth(0.5f),
+			            animModifier = Modifier
+				            .animatePlacement()
+				            .align(lapAlignment))
 			Column(verticalArrangement = Arrangement.Center,
 			       horizontalAlignment = Alignment.CenterHorizontally,
 			       modifier = Modifier
 				       .animatePlacement()
-				       .align(alignment)
+				       .align(controlAlignment)
 				       .fillMaxWidth(0.5f)) {
 				DisplayTime(stopwatch = stopwatch)
 				Spacer(modifier = Modifier.height(50.dp))
-				Controls(stopwatch = stopwatch)
+				Controls(stopwatch = stopwatch,
+				         leftHand = leftHand)
 			}
 		}
 		else
@@ -78,12 +87,8 @@ fun StopwatchView(stopwatch: StopwatchViewModel, landscape: Boolean = false)
 				            .animatePlacement()
 				            .align(alignment)
 				            .padding(top = tPad.value))
-			AnimatedVisibility(visible = hasLaps,
-			                   enter = fadeIn(animationSpec = tween(durationMillis = stopwatch.duration)),
-			                   exit = fadeOut(animationSpec = tween(durationMillis = stopwatch.duration))) {
-				DisplayLaps(stopwatch = stopwatch,
-				            modifier = Modifier.fillMaxHeight(0.68f))
-			}
+			DisplayLaps(stopwatch = stopwatch,
+			            modifier = Modifier.fillMaxHeight(0.68f))
 			Controls(stopwatch = stopwatch,
 			         modifier = Modifier
 				         .align(Alignment.BottomCenter)
@@ -115,36 +120,43 @@ fun DisplayTime(stopwatch: StopwatchViewModel, modifier: Modifier = Modifier)
 }
 
 @Composable
-fun DisplayLaps(stopwatch: StopwatchViewModel, modifier: Modifier = Modifier)
+fun DisplayLaps(stopwatch: StopwatchViewModel,
+                modifier: Modifier = Modifier,
+                animModifier: Modifier = Modifier)
 {
 	val laps = stopwatch.state.value.laps
 	val listState = rememberLazyListState()
-	LaunchedEffect(key1 = laps.count()) {
-		listState.animateScrollToItem(laps.count() - 1)
-	}
-	LazyColumn(state = listState,
-	           horizontalAlignment = Alignment.CenterHorizontally,
-	           verticalArrangement = Arrangement.Top,
-	           reverseLayout = true,
-	           modifier = modifier) {
-		val lapsList = laps.toList()
-		itemsIndexed(lapsList) {idx, lap ->
-			val point = TimePoint(lap)
-			val diff = TimePoint(if (idx > 0) lap - lapsList[idx - 1] else 0L)
-			Row(horizontalArrangement = Arrangement.Center,
-			    modifier = Modifier.fillMaxWidth(0.9f)) {
-				ProvideTextStyle(value = MaterialTheme.typography.titleLarge) {
-					Text(text = "${if (idx + 1 < 10) "0" else ""}${idx + 1}",
-					     color = MaterialTheme.colorScheme.secondary,
-					     modifier = Modifier.weight(0.3f))
-					Text(text = "$point",
-					     color = MaterialTheme.colorScheme.primary,
-					     textAlign = TextAlign.End,
-					     modifier = Modifier.weight(1f))
-					Text(text = "$diff",
-					     color = MaterialTheme.colorScheme.primary,
-					     textAlign = TextAlign.End,
-					     modifier = Modifier.weight(1f))
+	AnimatedVisibility(visible = stopwatch.state.value.lapCnt != 0,
+	                   enter = fadeIn(animationSpec = tween(durationMillis = stopwatch.duration)),
+	                   exit = fadeOut(animationSpec = tween(durationMillis = stopwatch.duration)),
+	                   modifier = animModifier) {
+		LaunchedEffect(key1 = laps.count()) {
+			listState.animateScrollToItem(laps.count() - 1)
+		}
+		LazyColumn(state = listState,
+		           horizontalAlignment = Alignment.CenterHorizontally,
+		           verticalArrangement = Arrangement.Top,
+		           reverseLayout = true,
+		           modifier = modifier) {
+			val lapsList = laps.toList()
+			itemsIndexed(lapsList) {idx, lap ->
+				val point = TimePoint(lap)
+				val diff = TimePoint(if (idx > 0) lap - lapsList[idx - 1] else 0L)
+				Row(horizontalArrangement = Arrangement.Center,
+				    modifier = Modifier.fillMaxWidth(0.9f)) {
+					ProvideTextStyle(value = MaterialTheme.typography.titleLarge) {
+						Text(text = "${if (idx + 1 < 10) "0" else ""}${idx + 1}",
+						     color = MaterialTheme.colorScheme.secondary,
+						     modifier = Modifier.weight(0.3f))
+						Text(text = "$point",
+						     color = MaterialTheme.colorScheme.primary,
+						     textAlign = TextAlign.End,
+						     modifier = Modifier.weight(1f))
+						Text(text = "$diff",
+						     color = MaterialTheme.colorScheme.primary,
+						     textAlign = TextAlign.End,
+						     modifier = Modifier.weight(1f))
+					}
 				}
 			}
 		}
@@ -152,7 +164,9 @@ fun DisplayLaps(stopwatch: StopwatchViewModel, modifier: Modifier = Modifier)
 }
 
 @Composable
-fun Controls(stopwatch: StopwatchViewModel, modifier: Modifier = Modifier)
+fun Controls(stopwatch: StopwatchViewModel,
+             modifier: Modifier = Modifier,
+             leftHand: Boolean = true)
 {
 	val toggleTicking = {stopwatch.onEvent(StopwatchEvent.ToggleTicking)}
 	val lapOrReset = {stopwatch.onEvent(StopwatchEvent.LapOrReset)}
@@ -166,7 +180,7 @@ fun Controls(stopwatch: StopwatchViewModel, modifier: Modifier = Modifier)
 	Box(modifier = modifier.width(widthAnim.value)) {
 		Button(onClick = toggleTicking,
 		       modifier = Modifier
-			       .align(Alignment.CenterStart)
+			       .align(if (leftHand) Alignment.CenterStart else Alignment.CenterEnd)
 			       .width(buttonWidth.dp)) {
 			Text(text = if (state.ticking) stringResource(R.string.pause)
 			else if (state.startTime != 0L) stringResource(R.string.resume)
@@ -176,7 +190,7 @@ fun Controls(stopwatch: StopwatchViewModel, modifier: Modifier = Modifier)
 		AnimatedVisibility(visible = state.startTime != 0L,
 		                   enter = fadeIn(animationSpec = tween(durationMillis = duration)),
 		                   exit = fadeOut(animationSpec = tween(durationMillis = duration)),
-		                   modifier = Modifier.align(Alignment.CenterEnd)) {
+		                   modifier = Modifier.align(if (!leftHand) Alignment.CenterStart else Alignment.CenterEnd)) {
 			Button(onClick = lapOrReset,
 			       modifier = Modifier.width(buttonWidth.dp)) {
 				Text(text = if (state.ticking) stringResource(R.string.lap)
@@ -195,6 +209,7 @@ private fun StopwatchPreview()
 	val fakeStopwatch = StopwatchViewModel(fakeDao)
 	fakeStopwatch.onEvent(StopwatchEvent.ToggleTicking)
 	TimepiecesTheme {
-		StopwatchView(stopwatch = fakeStopwatch)
+		StopwatchView(stopwatch = fakeStopwatch,
+		              leftHand = true)
 	}
 }

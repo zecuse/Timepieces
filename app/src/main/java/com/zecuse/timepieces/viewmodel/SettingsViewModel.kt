@@ -91,15 +91,15 @@ class SettingsViewModel(private val dao: AppDao): ViewModel()
 					state.apply {this.value = this.value.copy(tabsStyle = event.tabs)}
 				}
 			}
-			is SettingsEvent.SetHandedness ->
+			SettingsEvent.ToggleHandedness ->
 			{
 				viewModelScope.launch {
 					var settings = dao.getSettings()
 						               .first() ?: SettingsData()
-					settings = settings.copy(leftHanded = event.leftHanded)
+					settings = settings.copy(leftHanded = !settings.leftHanded)
 					dao.updateSetting(settings)
 					state.apply {
-						this.value = this.value.copy(leftHanded = event.leftHanded)
+						this.value = this.value.copy(leftHanded = !settings.leftHanded)
 					}
 				}
 			}
