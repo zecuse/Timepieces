@@ -29,4 +29,9 @@ sealed interface SettingsEvent
 	 * Sets the [SettingsState.tabsStyle] to the [tabs] value.
 	 */
 	data class SetTabs(val tabs: MyTabs): SettingsEvent
+
+	/**
+	 * Toggles the handedness in landscape mode.
+	 */
+	data class SetHandedness(val leftHanded: Boolean): SettingsEvent
 }

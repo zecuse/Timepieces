@@ -3,6 +3,8 @@
 	<string name="is_selected"> is selected</string>
 	<string name="is_not_selected"> is not selected</string>
 	<string name="icon"> icon</string>
+	<string name="left_hand">Left hand</string>
+	<string name="right_hand">Right hand</string>
 	<string name="alarm">Alarm</string>
 	<string name="clock">Clock</string>
 	<string name="stopwatch">Stopwatch</string>

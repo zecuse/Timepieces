@@ -34,6 +34,7 @@ class MainActivity: ComponentActivity()
 	override fun onCreate(savedInstanceState: Bundle?)
 	{
 		super.onCreate(savedInstanceState)
+//		applicationContext.deleteDatabase("settings.db")
 		val tabs = listOf(
 			TabItem(title = getString(R.string.alarm),
 			        selectedIcon = R.drawable.alarm_filled,

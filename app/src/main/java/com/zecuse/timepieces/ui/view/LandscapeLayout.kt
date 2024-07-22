@@ -10,6 +10,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.tooling.preview.Preview
@@ -22,6 +23,7 @@ import com.zecuse.timepieces.ui.theme.shapes.roundrect
 import com.zecuse.timepieces.ui.view.tabs.MyTabs
 import com.zecuse.timepieces.ui.view.tabs.TabbedColumn
 import com.zecuse.timepieces.ui.view.tabs.TitleIconTab
+import com.zecuse.timepieces.ui.view.utils.HandButton
 import com.zecuse.timepieces.viewmodel.SettingsEvent
 import com.zecuse.timepieces.viewmodel.SettingsViewModel
 import com.zecuse.timepieces.viewmodel.StopwatchViewModel
@@ -44,36 +46,15 @@ fun LandscapeLayout(tabItems: List<TabItem>,
                     stopwatch: StopwatchViewModel,
                     modifier: Modifier = Modifier)
 {
-	val tabStyle = settings.state.value.tabsStyle
-	val coScope = rememberCoroutineScope()
+	val leftHand = settings.state.value.leftHanded
+	val switchHands = {settings.onEvent(SettingsEvent.SetHandedness(!leftHand))}
 
-	Row(modifier = modifier.fillMaxSize()) {
-		TabbedColumn(selectedTabIndex = pagerState.targetPage,
-		             modifier = Modifier.padding(4.dp),
-		             indicatorShape = {
-			             if (tabStyle != MyTabs.Icon)
-			             {
-				             MaterialTheme.roundrect(offset = Offset(x = 0f,
-				                                                     y = if (tabStyle == MyTabs.Both) 86f else 0f),
-				                                     size = Pair(it,
-				                                                 25.dp),
-				                                     radius = 15.dp)
-			             }
-			             else
-			             {
-				             // Deliberate empty shape.
-				             MaterialTheme.roundrect(size = 0.dp,
-				                                     radius = 0.dp)
-			             }
-		             }) {
-			tabItems.forEachIndexed {idx, item ->
-				TitleIconTab(tabsStyle = settings.state.value.tabsStyle,
-				             idx = idx,
-				             item = item,
-				             coScope = coScope,
-				             pagerState = pagerState)
-			}
-		}
+	Row(verticalAlignment = Alignment.CenterVertically,
+	    modifier = modifier.fillMaxSize()) {
+		if (leftHand) HandButton(leftHand) {switchHands()}
+		else Tabs(tabItems,
+		          pagerState,
+		          settings)
 		VerticalPager(state = pagerState,
 		              modifier = Modifier.weight(1f)) {
 			when (pagerState.targetPage)
@@ -84,6 +65,44 @@ fun LandscapeLayout(tabItems: List<TabItem>,
 				                   landscape = true)
 				3 -> TimerView()
 			}
+		}
+		if (!leftHand) HandButton(leftHand) {switchHands()}
+		else Tabs(tabItems,
+		          pagerState,
+		          settings)
+	}
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun Tabs(tabItems: List<TabItem>, pagerState: PagerState, settings: SettingsViewModel)
+{
+	val coScope = rememberCoroutineScope()
+	val tabStyle = settings.state.value.tabsStyle
+	TabbedColumn(selectedTabIndex = pagerState.targetPage,
+	             modifier = Modifier.padding(4.dp),
+	             indicatorShape = {
+		             if (tabStyle != MyTabs.Icon)
+		             {
+			             MaterialTheme.roundrect(offset = Offset(x = 0f,
+			                                                     y = if (tabStyle == MyTabs.Both) 86f else 0f),
+			                                     size = Pair(it,
+			                                                 25.dp),
+			                                     radius = 15.dp)
+		             }
+		             else
+		             {
+			             // Deliberate empty shape.
+			             MaterialTheme.roundrect(size = 0.dp,
+			                                     radius = 0.dp)
+		             }
+	             }) {
+		tabItems.forEachIndexed {idx, item ->
+			TitleIconTab(tabsStyle = tabStyle,
+			             idx = idx,
+			             item = item,
+			             coScope = coScope,
+			             pagerState = pagerState)
 		}
 	}
 }

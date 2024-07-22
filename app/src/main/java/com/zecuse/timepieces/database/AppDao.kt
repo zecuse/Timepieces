@@ -60,6 +60,7 @@ class FakeDao: AppDao
 	{
 		fakeSettings["theme"] = settings.theme
 		fakeSettings["color"] = settings.color
+		fakeSettings["leftHanded"] = settings.leftHanded
 		fakeSettings["spacing"] = settings.spacing
 		fakeSettings["tabs"] = settings.tabs
 	}
@@ -68,6 +69,7 @@ class FakeDao: AppDao
 	{
 		return MutableStateFlow(SettingsData(theme = fakeSettings["theme"] as AppTheme,
 		                                     color = fakeSettings["color"] as AppColor,
+		                                     leftHanded = fakeSettings["leftHanded"] as Boolean,
 		                                     spacing = fakeSettings["spacing"] as String,
 		                                     tabs = fakeSettings["tabs"] as MyTabs))
 	}

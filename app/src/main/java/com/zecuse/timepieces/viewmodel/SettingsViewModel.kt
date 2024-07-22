@@ -43,7 +43,7 @@ class SettingsViewModel(private val dao: AppDao): ViewModel()
 	{
 		when (event)
 		{
-			is SettingsEvent.SetColor   ->
+			is SettingsEvent.SetColor      ->
 			{
 				viewModelScope.launch {
 					var settings = dao.getSettings()
@@ -53,7 +53,7 @@ class SettingsViewModel(private val dao: AppDao): ViewModel()
 					state.apply {this.value = this.value.copy(color = event.color)}
 				}
 			}
-			is SettingsEvent.SetSpacing ->
+			is SettingsEvent.SetSpacing    ->
 			{
 				viewModelScope.launch {
 					var settings = dao.getSettings()
@@ -71,7 +71,7 @@ class SettingsViewModel(private val dao: AppDao): ViewModel()
 					}
 				}
 			}
-			is SettingsEvent.SetTheme   ->
+			is SettingsEvent.SetTheme      ->
 			{
 				viewModelScope.launch {
 					var settings = dao.getSettings()
@@ -81,7 +81,7 @@ class SettingsViewModel(private val dao: AppDao): ViewModel()
 					state.apply {this.value = this.value.copy(theme = event.theme)}
 				}
 			}
-			is SettingsEvent.SetTabs    ->
+			is SettingsEvent.SetTabs       ->
 			{
 				viewModelScope.launch {
 					var settings = dao.getSettings()
@@ -89,6 +89,18 @@ class SettingsViewModel(private val dao: AppDao): ViewModel()
 					settings = settings.copy(tabs = event.tabs)
 					dao.updateSetting(settings)
 					state.apply {this.value = this.value.copy(tabsStyle = event.tabs)}
+				}
+			}
+			is SettingsEvent.SetHandedness ->
+			{
+				viewModelScope.launch {
+					var settings = dao.getSettings()
+						               .first() ?: SettingsData()
+					settings = settings.copy(leftHanded = event.leftHanded)
+					dao.updateSetting(settings)
+					state.apply {
+						this.value = this.value.copy(leftHanded = event.leftHanded)
+					}
 				}
 			}
 		}
