@@ -5,6 +5,7 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,12 +20,17 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.VerticalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -36,15 +42,63 @@ import com.zecuse.timepieces.R
 import com.zecuse.timepieces.database.FakeDao
 import com.zecuse.timepieces.model.TimePoint
 import com.zecuse.timepieces.ui.theme.TimepiecesTheme
+import com.zecuse.timepieces.ui.view.utils.SwipeContent
+import com.zecuse.timepieces.ui.view.utils.SwipeSettings
 import com.zecuse.timepieces.ui.view.utils.animatePlacement
 import com.zecuse.timepieces.viewmodel.StopwatchEvent
 import com.zecuse.timepieces.viewmodel.StopwatchViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun StopwatchView(stopwatch: StopwatchViewModel,
                   leftHand: Boolean,
                   landscape: Boolean = false)
+{
+	val pagerState = rememberPagerState {2}
+	val coScope = rememberCoroutineScope()
+
+	if (landscape)
+	{
+		HorizontalPager(state = pagerState) {
+			when (pagerState.targetPage)
+			{
+				0 -> StopwatchContent(stopwatch = stopwatch,
+				                      leftHand = leftHand,
+				                      landscape = landscape,
+				                      coScope = coScope,
+				                      pagerState = pagerState)
+				1 -> StopwatchSettings(coScope = coScope,
+				                       pagerState = pagerState)
+			}
+		}
+	}
+	else
+	{
+		VerticalPager(state = pagerState) {
+			when (pagerState.targetPage)
+			{
+				0 -> StopwatchContent(stopwatch = stopwatch,
+				                      leftHand = leftHand,
+				                      landscape = landscape,
+				                      coScope = coScope,
+				                      pagerState = pagerState)
+				1 -> StopwatchSettings(coScope = coScope,
+				                       pagerState = pagerState)
+			}
+		}
+	}
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun StopwatchContent(stopwatch: StopwatchViewModel,
+                     leftHand: Boolean,
+                     landscape: Boolean,
+                     coScope: CoroutineScope,
+                     pagerState: PagerState)
 {
 	Box(contentAlignment = Alignment.Center,
 	    modifier = Modifier.fillMaxSize()) {
@@ -74,6 +128,7 @@ fun StopwatchView(stopwatch: StopwatchViewModel,
 				Spacer(modifier = Modifier.height(50.dp))
 				Controls(stopwatch = stopwatch,
 				         leftHand = leftHand)
+				SwipeSettings {coScope.launch {pagerState.animateScrollToPage(1)}}
 			}
 		}
 		else
@@ -93,8 +148,20 @@ fun StopwatchView(stopwatch: StopwatchViewModel,
 			         modifier = Modifier
 				         .align(Alignment.BottomCenter)
 				         .padding(bottom = 50.dp))
+			SwipeSettings(modifier = Modifier
+				.align(Alignment.BottomCenter)
+				.padding(bottom = 10.dp)) {coScope.launch {pagerState.animateScrollToPage(1)}}
 		}
 	}
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun StopwatchSettings(coScope: CoroutineScope,
+                      pagerState: PagerState,
+                      modifier: Modifier = Modifier)
+{
+	SwipeContent(icon = R.drawable.stopwatch_filled) {coScope.launch {pagerState.animateScrollToPage(1)}}
 }
 
 @Composable
