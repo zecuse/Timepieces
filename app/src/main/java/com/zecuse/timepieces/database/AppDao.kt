@@ -47,7 +47,8 @@ class FakeDao: AppDao
 	init
 	{
 		fakeSettings["theme"] = AppTheme.Light
-		fakeSettings["color"] = AppColor.Magenta
+		fakeSettings["primaryColor"] = AppColor.Magenta
+		fakeSettings["secondaryColor"] = AppColor.Magenta
 		fakeSettings["leftHanded"] = false
 		fakeSettings["spacing"] = "default"
 		fakeSettings["tabs"] = MyTabs.Both
@@ -59,7 +60,8 @@ class FakeDao: AppDao
 	override suspend fun updateSetting(settings: SettingsData)
 	{
 		fakeSettings["theme"] = settings.theme
-		fakeSettings["color"] = settings.color
+		fakeSettings["primaryColor"] = settings.primaryColor
+		fakeSettings["secondaryColor"] = settings.secondaryColor
 		fakeSettings["leftHanded"] = settings.leftHanded
 		fakeSettings["spacing"] = settings.spacing
 		fakeSettings["tabs"] = settings.tabs
@@ -68,7 +70,8 @@ class FakeDao: AppDao
 	override fun getSettings(): Flow<SettingsData?>
 	{
 		return MutableStateFlow(SettingsData(theme = fakeSettings["theme"] as AppTheme,
-		                                     color = fakeSettings["color"] as AppColor,
+		                                     primaryColor = fakeSettings["primaryColor"] as AppColor,
+		                                     secondaryColor = fakeSettings["secondaryColor"] as AppColor,
 		                                     leftHanded = fakeSettings["leftHanded"] as Boolean,
 		                                     spacing = fakeSettings["spacing"] as String,
 		                                     tabs = fakeSettings["tabs"] as MyTabs))

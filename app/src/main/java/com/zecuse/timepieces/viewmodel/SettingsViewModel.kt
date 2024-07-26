@@ -8,6 +8,7 @@ import com.zecuse.timepieces.database.AppDao
 import com.zecuse.timepieces.model.SettingsData
 import com.zecuse.timepieces.model.SettingsState
 import com.zecuse.timepieces.ui.theme.AppFonts
+import com.zecuse.timepieces.ui.theme.SchemeParam
 import com.zecuse.timepieces.ui.theme.changeFont
 import com.zecuse.timepieces.ui.theme.defaultType
 import kotlinx.coroutines.flow.first
@@ -31,7 +32,7 @@ class SettingsViewModel(private val dao: AppDao): ViewModel()
 					else   -> defaultType
 				}
 				this.value = this.value.copy(theme = settings.theme,
-				                             color = settings.color,
+				                             primaryColor = settings.primaryColor,
 				                             spacing = spacing,
 				                             typography = typography,
 				                             tabsStyle = settings.tabs)
@@ -48,9 +49,21 @@ class SettingsViewModel(private val dao: AppDao): ViewModel()
 				viewModelScope.launch {
 					var settings = dao.getSettings()
 						               .first() ?: SettingsData()
-					settings = settings.copy(color = event.color)
+					settings = when (event.param)
+					{
+						SchemeParam.Primary   -> settings.copy(primaryColor = event.color)
+						SchemeParam.Secondary -> settings.copy(secondaryColor = event.color)
+						else -> settings
+					}
 					dao.updateSetting(settings)
-					state.apply {this.value = this.value.copy(color = event.color)}
+					state.apply {
+						this.value = when (event.param)
+						{
+							SchemeParam.Primary   -> this.value.copy(primaryColor = event.color)
+							SchemeParam.Secondary -> this.value.copy(secondaryColor = event.color)
+							else -> this.value
+						}
+					}
 				}
 			}
 			is SettingsEvent.SetSpacing    ->

@@ -87,7 +87,8 @@ fun PortraitLayout(tabItems: List<TabItem>,
 			{
 				0 -> AlarmView()
 				1 -> ClockView()
-				2 -> StopwatchView(stopwatch = stopwatch,
+				2 -> StopwatchView(settings = settings,
+				                   stopwatch = stopwatch,
 				                   leftHand = settings.state.value.leftHanded)
 				3 -> TimerView()
 			}

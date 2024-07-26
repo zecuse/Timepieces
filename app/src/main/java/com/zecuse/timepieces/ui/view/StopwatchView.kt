@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerScope
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -42,10 +43,12 @@ import com.zecuse.timepieces.R
 import com.zecuse.timepieces.database.FakeDao
 import com.zecuse.timepieces.model.TimePoint
 import com.zecuse.timepieces.ui.theme.TimepiecesTheme
+import com.zecuse.timepieces.ui.view.utils.CommonSettings
 import com.zecuse.timepieces.ui.view.utils.ContentSettings
 import com.zecuse.timepieces.ui.view.utils.SwipeContent
 import com.zecuse.timepieces.ui.view.utils.SwipeSettings
 import com.zecuse.timepieces.ui.view.utils.animatePlacement
+import com.zecuse.timepieces.viewmodel.SettingsViewModel
 import com.zecuse.timepieces.viewmodel.StopwatchEvent
 import com.zecuse.timepieces.viewmodel.StopwatchViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -54,42 +57,34 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun StopwatchView(stopwatch: StopwatchViewModel,
+fun StopwatchView(settings: SettingsViewModel,
+                  stopwatch: StopwatchViewModel,
                   leftHand: Boolean,
                   landscape: Boolean = false)
 {
 	val pagerState = rememberPagerState {2}
 	val coScope = rememberCoroutineScope()
-
-	if (landscape)
-	{
-		HorizontalPager(state = pagerState) {
-			when (pagerState.targetPage)
-			{
-				0 -> StopwatchContent(stopwatch = stopwatch,
-				                      leftHand = leftHand,
-				                      landscape = landscape,
-				                      coScope = coScope,
-				                      pagerState = pagerState)
-				1 -> StopwatchSettings(coScope = coScope,
-				                       pagerState = pagerState)
-			}
+	val pageContent: @Composable (PagerScope.(page: Int) -> Unit) = {
+		when (pagerState.targetPage)
+		{
+			0 -> StopwatchContent(stopwatch = stopwatch,
+			                      leftHand = leftHand,
+			                      landscape = landscape,
+			                      coScope = coScope,
+			                      pagerState = pagerState)
+			1 -> StopwatchSettings(settings = settings,
+			                       coScope = coScope,
+			                       pagerState = pagerState)
 		}
 	}
-	else
-	{
-		VerticalPager(state = pagerState) {
-			when (pagerState.targetPage)
-			{
-				0 -> StopwatchContent(stopwatch = stopwatch,
-				                      leftHand = leftHand,
-				                      landscape = landscape,
-				                      coScope = coScope,
-				                      pagerState = pagerState)
-				1 -> StopwatchSettings(coScope = coScope,
-				                       pagerState = pagerState)
-			}
-		}
+
+	if (landscape) HorizontalPager(state = pagerState) {
+		pageContent(this,
+		            it)
+	}
+	else VerticalPager(state = pagerState) {
+		pageContent(this,
+		            it)
 	}
 }
 
@@ -158,11 +153,12 @@ fun StopwatchContent(stopwatch: StopwatchViewModel,
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun StopwatchSettings(coScope: CoroutineScope,
-                      pagerState: PagerState,
-                      modifier: Modifier = Modifier)
+fun StopwatchSettings(settings: SettingsViewModel,
+                      coScope: CoroutineScope,
+                      pagerState: PagerState)
 {
 	SwipeContent(icon = R.drawable.stopwatch_filled) {coScope.launch {pagerState.animateScrollToPage(ContentSettings.CONTENT.ordinal)}}
+	CommonSettings(settings)
 }
 
 @Composable
@@ -274,10 +270,12 @@ fun Controls(stopwatch: StopwatchViewModel,
 private fun StopwatchPreview()
 {
 	val fakeDao = FakeDao()
+	val fakeSettings = SettingsViewModel(fakeDao)
 	val fakeStopwatch = StopwatchViewModel(fakeDao)
 	fakeStopwatch.onEvent(StopwatchEvent.ToggleTicking)
 	TimepiecesTheme {
-		StopwatchView(stopwatch = fakeStopwatch,
+		StopwatchView(settings = fakeSettings,
+		              stopwatch = fakeStopwatch,
 		              leftHand = true)
 	}
 }

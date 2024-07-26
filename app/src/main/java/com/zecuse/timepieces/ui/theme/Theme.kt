@@ -36,7 +36,7 @@ enum class AppTheme
 
 enum class SchemeParam
 {
-	Primary, Secondary
+	None, Primary, Secondary
 }
 
 /**
@@ -377,10 +377,10 @@ fun TimepiecesTheme(settings: SettingsState = SettingsState(),
 	{
 		dynamicTheme && darkTheme  -> dynamicDarkColorScheme(LocalContext.current)
 		dynamicTheme && !darkTheme -> dynamicLightColorScheme(LocalContext.current)
-		darkTheme                  -> ColorSchemes.darkColors(settings.color,
-		                                                      settings.color)
-		else                       -> ColorSchemes.lightColors(settings.color,
-		                                                       settings.color)
+		darkTheme                  -> ColorSchemes.darkColors(settings.primaryColor,
+		                                                      settings.secondaryColor)
+		else                       -> ColorSchemes.lightColors(settings.primaryColor,
+		                                                       settings.secondaryColor)
 	}
 	val contrastColors = when
 	{
