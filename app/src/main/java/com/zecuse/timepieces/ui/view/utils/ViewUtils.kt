@@ -63,6 +63,8 @@ fun HandButton(left: Boolean = true, onClick: () -> Unit)
 	}
 }
 
+enum class ContentSettings { CONTENT, SETTINGS}
+
 @Composable
 fun SwipeSettings(modifier: Modifier = Modifier,
                   horizontal: Boolean = false,

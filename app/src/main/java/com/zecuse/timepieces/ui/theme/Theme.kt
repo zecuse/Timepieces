@@ -34,12 +34,27 @@ enum class AppTheme
 	Auto, Dark, Light
 }
 
+enum class SchemeParam
+{
+	Primary, Secondary
+}
+
 /**
  * Defines a [ColorScheme] for each of the [AppColor] values for the [AppTheme.Light] and [AppTheme.Dark] themes.
  */
 object ColorSchemes
 {
-	private fun darkPrimaryColors(color: AppColor): Pair<Color, Color>
+	private fun baseDarkColors(): ColorScheme
+	{
+		return darkColorScheme(background = AllColors.Grey15)
+	}
+
+	private fun baseLightColors(): ColorScheme
+	{
+		return lightColorScheme(background = AllColors.Grey90)
+	}
+
+	fun darkPrimaryColors(color: AppColor): Pair<Color, Color>
 	{
 		var primary: Color = Color.Unspecified
 		var onPrimary: Color = Color.Unspecified
@@ -111,7 +126,7 @@ object ColorSchemes
 		            onPrimary)
 	}
 
-	private fun lightPrimaryColors(color: AppColor): Pair<Color, Color>
+	fun lightPrimaryColors(color: AppColor): Pair<Color, Color>
 	{
 		var primary: Color = Color.Unspecified
 		var onPrimary: Color = Color.Unspecified
@@ -183,7 +198,7 @@ object ColorSchemes
 		            onPrimary)
 	}
 
-	private fun darkSecondaryColors(color: AppColor): Pair<Color, Color>
+	fun darkSecondaryColors(color: AppColor): Pair<Color, Color>
 	{
 		var secondary: Color = Color.Unspecified
 		var onSecondary: Color = Color.Unspecified
@@ -255,7 +270,7 @@ object ColorSchemes
 		            onSecondary)
 	}
 
-	private fun lightSecondaryColors(color: AppColor): Pair<Color, Color>
+	fun lightSecondaryColors(color: AppColor): Pair<Color, Color>
 	{
 		var secondary: Color = Color.Unspecified
 		var onSecondary: Color = Color.Unspecified
@@ -325,16 +340,6 @@ object ColorSchemes
 
 		return Pair(secondary,
 		            onSecondary)
-	}
-
-	private fun baseDarkColors(): ColorScheme
-	{
-		return darkColorScheme(background = AllColors.Grey15)
-	}
-
-	private fun baseLightColors(): ColorScheme
-	{
-		return lightColorScheme(background = AllColors.Grey90)
 	}
 
 	fun darkColors(primary: AppColor, secondary: AppColor): ColorScheme

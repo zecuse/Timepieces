@@ -14,4 +14,9 @@
 	<string name="pause">Pause</string>
 	<string name="resume">Resume</string>
 	<string name="lap">Lap</string>
+	<string name="dark_mode">Dark mode</string>
+	<string name="light_mode">Light mode</string>
+	<string name="auto_theme">Auto theme</string>
+	<string name="pick_color">Pick a color</string>
+	<string name="change_font">Change font</string>
 </resources>

@@ -42,6 +42,7 @@ import com.zecuse.timepieces.R
 import com.zecuse.timepieces.database.FakeDao
 import com.zecuse.timepieces.model.TimePoint
 import com.zecuse.timepieces.ui.theme.TimepiecesTheme
+import com.zecuse.timepieces.ui.view.utils.ContentSettings
 import com.zecuse.timepieces.ui.view.utils.SwipeContent
 import com.zecuse.timepieces.ui.view.utils.SwipeSettings
 import com.zecuse.timepieces.ui.view.utils.animatePlacement
@@ -128,7 +129,7 @@ fun StopwatchContent(stopwatch: StopwatchViewModel,
 				Spacer(modifier = Modifier.height(50.dp))
 				Controls(stopwatch = stopwatch,
 				         leftHand = leftHand)
-				SwipeSettings {coScope.launch {pagerState.animateScrollToPage(1)}}
+				SwipeSettings {coScope.launch {pagerState.animateScrollToPage(ContentSettings.SETTINGS.ordinal)}}
 			}
 		}
 		else
@@ -150,7 +151,7 @@ fun StopwatchContent(stopwatch: StopwatchViewModel,
 				         .padding(bottom = 50.dp))
 			SwipeSettings(modifier = Modifier
 				.align(Alignment.BottomCenter)
-				.padding(bottom = 10.dp)) {coScope.launch {pagerState.animateScrollToPage(1)}}
+				.padding(bottom = 10.dp)) {coScope.launch {pagerState.animateScrollToPage(ContentSettings.SETTINGS.ordinal)}}
 		}
 	}
 }
@@ -161,7 +162,7 @@ fun StopwatchSettings(coScope: CoroutineScope,
                       pagerState: PagerState,
                       modifier: Modifier = Modifier)
 {
-	SwipeContent(icon = R.drawable.stopwatch_filled) {coScope.launch {pagerState.animateScrollToPage(1)}}
+	SwipeContent(icon = R.drawable.stopwatch_filled) {coScope.launch {pagerState.animateScrollToPage(ContentSettings.CONTENT.ordinal)}}
 }
 
 @Composable
