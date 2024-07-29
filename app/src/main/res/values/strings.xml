@@ -17,7 +17,10 @@
 	<string name="dark_mode">Dark mode</string>
 	<string name="light_mode">Light mode</string>
 	<string name="auto_theme">Auto theme</string>
-	<string name="pick_primary_color">Pick a color</string>
-	<string name="pick_secondary_color">Pick a color</string>
+	<string name="pick_primary_color">Pick a primary color</string>
+	<string name="pick_secondary_color">Pick a secondary color</string>
 	<string name="change_font">Change font</string>
+	<string name="primary_color">Primary Color:</string>
+	<string name="secondary_color">Secondary Color:</string>
+	<string name="error">Error!</string>
 </resources>

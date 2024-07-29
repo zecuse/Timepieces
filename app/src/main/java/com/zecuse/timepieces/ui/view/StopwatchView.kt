@@ -6,6 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,6 +35,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -157,8 +160,21 @@ fun StopwatchSettings(settings: SettingsViewModel,
                       coScope: CoroutineScope,
                       pagerState: PagerState)
 {
-	SwipeContent(icon = R.drawable.stopwatch_filled) {coScope.launch {pagerState.animateScrollToPage(ContentSettings.CONTENT.ordinal)}}
-	CommonSettings(settings)
+	val localFocusManager = LocalFocusManager.current
+	Column(modifier = Modifier
+		.fillMaxSize()
+		.pointerInput(Unit) {
+			detectTapGestures(onTap = {localFocusManager.clearFocus()})
+		}) {
+		SwipeContent(icon = R.drawable.stopwatch_filled,
+		             modifier = Modifier.align(Alignment.CenterHorizontally)) {coScope.launch {pagerState.animateScrollToPage(ContentSettings.CONTENT.ordinal)}}
+		CommonSettings(settings = settings)
+		Column(modifier = Modifier.weight(1f)) {
+			(1..3).forEach {
+				Text(text = it.toString())
+			}
+		}
+	}
 }
 
 @Composable

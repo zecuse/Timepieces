@@ -34,6 +34,9 @@ enum class AppTheme
 	Auto, Dark, Light
 }
 
+/**
+ * Determines which parameters of a [ColorScheme] will be customizable.
+ */
 enum class SchemeParam
 {
 	None, Primary, Secondary

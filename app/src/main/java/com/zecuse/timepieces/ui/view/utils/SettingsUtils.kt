@@ -31,6 +31,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -51,12 +54,12 @@ import com.zecuse.timepieces.viewmodel.SettingsEvent
 import com.zecuse.timepieces.viewmodel.SettingsViewModel
 
 @Composable
-fun CommonSettings(settings: SettingsViewModel)
+fun CommonSettings(settings: SettingsViewModel, modifier: Modifier = Modifier)
 {
 	val theme = settings.state.value.theme
 	var colorPick by remember {mutableStateOf(SchemeParam.None)}
 	ProvideTextStyle(value = TextStyle(color = MaterialTheme.colorScheme.primary)) {
-		Column(modifier = Modifier.clickable {colorPick = SchemeParam.None}) {
+		Column(modifier = modifier) {
 			Row(horizontalArrangement = Arrangement.SpaceBetween,
 			    verticalAlignment = Alignment.CenterVertically,
 			    modifier = Modifier
@@ -74,43 +77,42 @@ fun CommonSettings(settings: SettingsViewModel)
 				}
 			}
 			Box {
+				val schemeParams = SchemeParam.entries.drop(1)
+				val focusRequester = remember {FocusRequester()}
 				Column {
-					Row(horizontalArrangement = Arrangement.SpaceBetween,
-					    verticalAlignment = Alignment.CenterVertically,
-					    modifier = Modifier
-						    .fillMaxWidth()
-						    .padding(5.dp)) {
-						Text(text = "Primary Color:")
-						ColorPicker(param = SchemeParam.Primary,
-						            theme = theme,
-						            desc = stringResource(R.string.pick_primary_color)) {
-							colorPick = SchemeParam.Primary
-						}
-					}
-					Row(horizontalArrangement = Arrangement.SpaceBetween,
-					    verticalAlignment = Alignment.CenterVertically,
-					    modifier = Modifier
-						    .fillMaxWidth()
-						    .padding(5.dp)) {
-						Text(text = "Secondary Color:")
-						ColorPicker(param = SchemeParam.Secondary,
-						            theme = theme,
-						            desc = stringResource(R.string.pick_secondary_color)) {
-							colorPick = SchemeParam.Secondary
+					schemeParams.forEach {
+						Row(horizontalArrangement = Arrangement.SpaceBetween,
+						    verticalAlignment = Alignment.CenterVertically,
+						    modifier = Modifier
+							    .fillMaxWidth()
+							    .padding(5.dp)) {
+							Text(text = when (it)
+							{
+								SchemeParam.Primary   -> stringResource(R.string.primary_color)
+								SchemeParam.Secondary -> stringResource(R.string.secondary_color)
+								else                  -> stringResource(R.string.error)
+							})
+							ColorPicker(param = it,
+							            theme = theme,
+							            desc = when (it)
+							            {
+								            SchemeParam.Primary   -> stringResource(R.string.pick_primary_color)
+								            SchemeParam.Secondary -> stringResource(R.string.pick_secondary_color)
+								            else                  -> stringResource(R.string.error)
+							            }) {
+								colorPick = it
+								focusRequester.requestFocus()
+							}
 						}
 					}
 				}
-				Box(modifier = Modifier.align(Alignment.Center)) {
+				schemeParams.forEach {
 					ShowColors(settings = settings,
-					           param = SchemeParam.Primary,
+					           param = it,
 					           visible = colorPick,
-					           modifier = Modifier.align(Alignment.Center)) {
-						colorPick = SchemeParam.None
-					}
-					ShowColors(settings = settings,
-					           param = SchemeParam.Secondary,
-					           visible = colorPick,
-					           modifier = Modifier.align(Alignment.Center)) {
+					           modifier = Modifier
+						           .align(Alignment.Center)
+						           .focusRequester(focusRequester)) {
 						colorPick = SchemeParam.None
 					}
 				}
@@ -191,7 +193,7 @@ fun ShowColors(settings: SettingsViewModel,
 	AnimatedVisibility(visible = param == visible,
 	                   enter = slideInHorizontally {it},
 	                   exit = slideOutHorizontally {it},
-	                   modifier = modifier) {
+	                   modifier = modifier.onFocusChanged {if (!it.hasFocus) onClick()}) {
 		LazyVerticalGrid(columns = GridCells.Fixed(6),
 		                 contentPadding = PaddingValues(all = 5.dp),
 		                 modifier = Modifier
